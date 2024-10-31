@@ -1,0 +1,516 @@
+-- atpdb.sql
+CREATE TABLE players (
+  player_name VARCHAR(255),
+  born VARCHAR(255),
+  height INT, 
+  link_player VARCHAR(255),
+  backhand VARCHAR(255),
+  forehand VARCHAR(255)
+);
+
+LOAD DATA LOCAL INFILE "/Users/joaodias/Documents/BD/players.csv"
+INTO TABLE players
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+CREATE TABLE tournaments (
+  tournament VARCHAR(255),
+  location VARCHAR(255),
+  prize INT, 
+  start_date DATE,
+  end_date DATE
+);
+
+LOAD DATA LOCAL INFILE "/Users/joaodias/Documents/BD/tournaments.csv"
+INTO TABLE tournaments
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+CREATE TABLE games (
+  player_name VARCHAR(255),
+  link_player VARCHAR(255),
+  tournament VARCHAR(255), 
+  start_date DATE,
+  end_date DATE,
+  ground VARCHAR(255),
+  game_round VARCHAR(255),
+  game_rank INT, 
+  oponent VARCHAR(255),
+  wl VARCHAR(5),
+  score VARCHAR(255)
+);
+
+LOAD DATA LOCAL INFILE "/Users/joaodias/Documents/BD/games.csv"
+INTO TABLE games
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+
+
+
+-- depois de atpdb.sp 
+use atp
+
+CREATE TABLE countries (
+  country VARCHAR(255),
+  country_code VARCHAR(10)
+);
+
+LOAD DATA LOCAL INFILE "/Users/joaodias/Documents/BD/countries.csv"
+INTO TABLE countries
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+CREATE TABLE cities (
+  city VARCHAR(255),
+  country VARCHAR(255),
+  subcountry VARCHAR(255),
+  geonameid VARCHAR(255)
+);
+
+LOAD DATA LOCAL INFILE "/Users/joaodias/Documents/BD/world-cities.csv"
+INTO TABLE cities
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+-- Explorar born na tabela players
+SELECT DISTINCT born FROM players LIMIT 15;
+
+SELECT COUNT(DISTINCT born) FROM players; 
+
+SELECT COUNT(DISTINCT born) FROM players WHERE NOT INSTR(born,',')>0;
+
+
+CREATE TABLE born_clean (
+  born VARCHAR(255),
+  born_country VARCHAR(255)
+);
+
+INSERT INTO born_clean(born,born_country) 
+SELECT DISTINCT born as born, SUBSTRING_INDEX(born,',',-1) as born_country 
+FROM players WHERE INSTR(born,',')>0;
+
+
+INSERT INTO born_clean(born) 
+SELECT DISTINCT born 
+FROM players WHERE NOT INSTR(born, ',')>0;
+
+
+UPDATE born_clean set born_country=Trim(substring_index(born_country,",",-1)); 
+
+
+UPDATE born_clean, cities SET born_country=country where born_clean.born=cities.city; 
+
+
+UPDATE born_clean, countries SET born_country=country WHERE born=country AND NOT INSTR(born,',')>0; 
+
+
+update born_clean set born_country='United States' where born_country='AL' or born_country='USA' or born_country='CA' or born_country='CA USA' or born_country='California' or born_country='CO' or born_country='CT' or born_country='D.C.' or born_country='DC' or born_country='FL' or born_country='Florida' or born_country='GA' or born_country='FL' or born_country='Florida' or born_country='GA' or born_country='HI' or born_country='IA' or born_country='Idaho' or born_country='IL' or born_country='Illinois' or born_country='IN' or born_country='KS' or born_country='LA' or born_country='MA' or born_country='Maryland' or born_country='MI' or born_country='Michigan' or born_country='MN' or born_country='MO' or born_country='MS' or born_country='NC' or born_country='New York' or born_country='NJ' or born_country='North Carolina' or born_country='NY' or born_country='OH' or born_country='Ohio' or born_country='OR' or born_country='PA' or born_country='PA U.S.A.' or born_country='SC' or born_country='Tennessee' or born_country='Texas' or born_country='TN' or born_country='TX' or born_country='U.S.A' or born_country='US' or born_country='VA' or born_country='WA' or born_country='WI' or born_country='WV' or born_country='U.S.A.'; 
+update born_clean set born_country='Australia' where born_country='AUS' or born_country='Aust.' or born_country='Aust..' or born_country='S.A. Australia' or born_country='South Australia' or born_country='Victoria';
+update born_clean set born_country='Argentina' where born_country='ARG' or born_country='Argentin' or born_country='Buenos Aires' or born like '%cuarto, c%';
+update born_clean set born_country='Spain' where born_country='Barcelona' or born_country='Spai';
+update born_clean set born_country='Bolivia, Plurinational State of' where born_country='Bolivia';
+update born_clean set born_country='Bosnia and Herzegovina' where born_country='Bosnia' or born_country='Bosnia & Herzegovina' or born_country='Bosnia-Herzegovina';
+update born_clean set born_country='Brazil' where born_country='BRA' or born_country='Brasil' or born_country='Mato Grosso' or born_country='Pernambuco';
+update born_clean set born_country='Cambodia' where born_country='Camboda';
+update born_clean set born_country='Canada' where born_country='Canda';
+update born_clean set born_country='Taiwan, Province of China' where born_country='Chinese Taipei' or born_country='Taipei' or born_country='Taiwan';
+update born_clean set born_country='Ukraine' where born_country='Crimea';
+update born_clean set born_country='Czech Republic' where born_country='Cz Republic' or born_country='CZE' or born_country='Czech Rep.' or born_country='Czech.' or Born='Prague, Czechoslovakia' or Born='Olomouc, Czechoslovakia' or Born='Ostrava, Czechoslovakia' or Born='Trebic, Czechoslovakia' or Born='Plzen, Czechoslovakia';
+update born_clean set born_country='Slovakia' where Born='Povazska, Czechoslovakia' or Born='Bratislava, Czechoslovakia' or Born='Piestany, Czechoslovakia' or born_country='Slovak' or born_country='Slovak Republic';
+update born_clean set born_country='Argentina' where born_country Like ‘C_rdoba’;
+update born_clean set born_country='Dominican Republic' where born_country='Dominican Rep.';
+update born_clean set born_country='United Kingdom' where born_country='England' or born_country='Essex' or born_country='Great Britain' or born_country='Norfolk' or born_country='Scotland';
+update born_clean set born_country='Germany' where born_country='GER';
+update born_clean set born_country='Bahamas' where born_country='Grand Bahamas';
+update born_clean set born_country='India' where born_country='Haryana';
+update born_clean set born_country='Netherlands' where born_country='Holland' or born_country='The Netherlands';
+update born_clean set born_country='Iran, Islamic Republic of' where born_country='Iran';
+update born_clean set born_country="Côte d'Ivoire" where born_country='Ivory Coast' or born='Adzope, Ivory Coast' or born='Abidjan';
+update born_clean set born_country='Korea, Republic of' where born_country='Korea' or born_country='Korea (South)' or born_country='South Korea' or born='Jeju' or born='Kyunggi-do' or born='Gangwonto';
+update born_clean set born_country='Macedonia, the Former Yugoslav Republic of' where born_country='Macedonia';
+update born_clean set born_country='Moldova, Republic of' where born_country='Moldova';
+update born_clean set born_country='Russian Federation' where born_country='North-Ossetia' or born_country='Russia';
+update born_clean set born_country='Japan' where born_country='Osaka' or born_country='Tokyo';
+update born_clean set born_country='South Africa' where born_country='RSA';
+update born_clean set born_country='Romania' where born_country='Rumania';
+update born_clean set born_country='Venezuela, Bolivarian Republic of' where born_country='Venezuela';
+update born_clean set born_country='Viet Nam' where born_country='Vietnam';
+update born_clean set born_country='Serbia' where Born='Belgrade, Yugoslavia' or Born='Vrbas, Yugoslavia';
+update born_clean set born_country='Croatia' where Born='Zagreb, Yugoslavia' or Born='Split, Yugoslavia';
+update born_clean set born_country='Congo' where born_country='Democratic Republic of the Congo';
+update born_clean set born_country='Curaçao' where born_country='Curacao';
+update born_clean set born_country='Czech Republic' where Born Like 'Hradec Kr_lov_';
+update born_clean set born_country='Poland' where Born='Lodz';
+update born_clean set born_country='Italy' where Born='Monselice';
+update born_clean set born_country='Japan' where Born='Osaka Japan';
+update born_clean set born_country='Sweden' where Born='Gothenburg';
+update born_clean set born_country='Poland' where Born='Warszawa';
+update born_clean set born_country='Italy' where Born='Sanremo';
+update born_clean set born_country='Italy' where Born='Guastalla';
+update born_clean set born_country='China' where Born='Changhwa';
+update born_clean set born_country='France' where Born='Lons le saunier';
+update born_clean set born_country='Italy' where Born Like 'Ciri_';
+update born_clean set born_country='Austria' where Born='Wr.Neustadt';
+update born_clean set born_country='Argentina' where Born='Bragado';
+update born_clean set born_country='Netherlands' where Born='Exeter';
+update born_clean set born_country='Germany' where Born='Rheinfelden';
+update born_clean set born_country='Russian Federation' where Born='Saint-Petersburg';
+update born_clean set born_country='Australia' where Born='Campbelltown';
+update born_clean set born_country='Argentina' where Born='Balcarce';
+update born_clean set born_country='Uruguay' where Born Like'Paysand_';
+update born_clean set born_country='Germany' where Born Like'L_beck';
+update born_clean set born_country='South Africa' where Born='Gauteng';
+update born_clean set born_country='China' where Born='CHINA';
+update born_clean set born_country='United States' where Born='New York';
+update born_clean set born_country='Spain' where Born='Palma de Mallorca';
+update born_clean set born_country='Belgium' where Born='Woluwe St Lambert';
+update born_clean set born_country='Italy' where Born='Casalmaggiore';
+update born_clean set born_country='China' where Born='Xin jiang';
+update born_clean set born_country='Netherlands' where Born='Dirksland';
+update born_clean set born_country='United Kingdom' where Born='KINGSTON UPON THAMES';
+update born_clean set born_country='United Kingdom' where Born='Hatfield';
+update born_clean set born_country='France' where Born='Villeneuve saint Georges';
+update born_clean set born_country='France' where Born='France';
+update born_clean set born_country='New Caledonia' where Born Like 'Noum_a';
+update born_clean set born_country='Germany' where Born='Nuremberg';
+update born_clean set born_country='Australia' where Born='Subiaco';
+update born_clean set born_country='Germany' where Born='Weiden in der Oberpfalz';
+update born_clean set born_country='France' where Born='Nogent sur marne';
+update born_clean set born_country='Argentina' where Born='Rauch';
+update born_clean set born_country='United States' where Born='Princeton NJ';
+update born_clean set born_country='Finland' where Born Like 'Hyvink__';
+update born_clean set born_country='United Kingdom' where Born='Box Hill';~
+update born_clean set born_country='Russian Federation' where Born='Russia';
+update born_clean set born_country='China' where Born='Jiangsu';
+update born_clean set born_country='United States' where Born='Chandler Arizona';
+update born_clean set born_country='France' where Born='Saint Denis Reunion';
+update born_clean set born_country='Germany' where Born Like 'Gr_felfing';
+update born_clean set born_country='Austria' where Born='Schwaz';
+update born_clean set born_country='France' where Born='Saint-julien-genevois';
+update born_clean set born_country='Romania' where Born='Rm Valcea';
+update born_clean set born_country='Guatemala' where Born='Guatemala';
+update born_clean set born_country='Taiwan, Province of China' where Born='Chunghua';
+update born_clean set born_country='United Kingdom' where Born='Sunderland';
+update born_clean set born_country='Japan' where Born='Hyogo';
+update born_clean set born_country='Germany' where Born='Cologne';
+update born_clean set born_country='Japan' where Born Like 'Eksj_';
+update born_clean set born_country='Australia' where Born='St Kilda East';
+update born_clean set born_country='Germany' where Born Like'T_bingen';
+update born_clean set born_country='Austria' where Born='Hall in Tirol';
+update born_clean set born_country='Brazil' where Born Like'Londrina- Paran_';
+update born_clean set born_country='Sweden' where Born='Hjo';
+update born_clean set born_country='South Africa' where Born='AN SUNG';
+update born_clean set born_country='Philippines' where Born='Cagayan de Oro City';
+update born_clean set born_country='Saudi Arabia' where Born='Saudi Arabia';
+update born_clean set born_country='Israel' where Born='Petach Tikva';
+update born_clean set born_country='Argentina' where Born Like'Chascom_s';
+update born_clean set born_country='Switzerland' where Born='Flawil';
+update born_clean set born_country='Argentina' where Born Like'Ciudad Aut_noma de Buenos';
+update born_clean set born_country='Taiwan, Province of China' where Born='Taiwan';
+update born_clean set born_country='Germany' where Born Like'_stringen';
+update born_clean set born_country='United States' where Born='Hershey';
+update born_clean set born_country='France' where Born Like'S_vres';
+update born_clean set born_country='Germany' where Born='Duesseldorf';
+update born_clean set born_country='Italy' where Born='Roma';
+update born_clean set born_country='Poland' where Born='Ostrow Wlkp';
+update born_clean set born_country='Spain' where Born='Ciutadella de Menorca';
+update born_clean set born_country='Germany' where Born Like 'M_nchengladbach';
+update born_clean set born_country='South Africa' where Born='Johanesburg';
+update born_clean set born_country='Argentina' where Born='Mar del Palta';
+update born_clean set born_country='Mexico' where Born='Queretaro';
+update born_clean set born_country='Poland' where Born='Wroclaw';
+update born_clean set born_country='Italy' where Born='torino';
+update born_clean set born_country='Argentina' where Born='Merlo';
+update born_clean set born_country='Poland' where Born='Walbrzych';
+update born_clean set born_country='Madagascar' where Born='Madagascar';
+update born_clean set born_country='Portugal' where Born Like 'Oliveira de Azem_is';
+update born_clean set born_country='Ukraine' where Born='Krivoy Rog';
+update born_clean set born_country='Germany' where Born='schwaebisch hall';
+update born_clean set born_country='Poland' where Born='Priemysl';
+update born_clean set born_country='Haiti' where Born='Port au Prince';
+update born_clean set born_country='Curaçao' where Born='Curacao';
+update born_clean set born_country='Japan' where Born='Japan';
+update born_clean set born_country='Canada' where Born='Humboldt';
+update born_clean set born_country='Iran, Islamic Republic of ' where Born='Esfahan';
+update born_clean set born_country='Italy' where Born='Rovato (Brescia)';
+update born_clean set born_country='Ukraine' where Born='Kyiv';
+update born_clean set born_country='Germany' where Born='Bergisch - Gladbach';
+update born_clean set born_country='Belgium' where Born Like 'Li_ge';
+update born_clean set born_country='Russian Federation' where Born='Orenbourg';
+update born_clean set born_country='United States' where Born='Atlanta Ga';
+update born_clean set born_country='United States' where Born='Tarzana';
+update born_clean set born_country='Italy' where Born='Alatri';
+update born_clean set born_country='Taiwan, Province of China' where Born='Taipei City';
+update born_clean set born_country='French Polynesia' where Born='Tahiti';
+update born_clean set born_country='Japan' where Born='kanagawa';
+update born_clean set born_country='United States' where Born='New York New York';
+update born_clean set born_country='Brazil' where Born Like 'S_o Bernardo do Campo';
+update born_clean set born_country='Ukraine' where Born='Evpatoria';
+update born_clean set born_country='France' where Born='Le Pont-De-Beauvoisin';
+update born_clean set born_country='Portugal' where Born='Lisboa';
+update born_clean set born_country='United Kingdom' where Born='Penrith';
+update born_clean set born_country='Brazil' where Born Like'S_o Paulo';
+update born_clean set born_country='Romania' where Born='Bucuresti';
+update born_clean set born_country='Argentina' where Born='Argentina';
+update born_clean set born_country='Switzerland' where Born='Bienne';
+update born_clean set born_country='United States' where Born='Greenbrae';
+update born_clean set born_country='Austria' where Born='Portschach am Worthersee';
+update born_clean set born_country='Taiwan, Province of China' where Born='New Taipei City';
+update born_clean set born_country='Belgium' where Born='Bree';
+update born_clean set born_country='Italy' where Born='L Aquila';
+update born_clean set born_country='France' where Born='Levallois';
+update born_clean set born_country='Czech Republic' where Born Like 'Hodon_n';
+update born_clean set born_country='Zambia' where Born='Zambia';
+update born_clean set born_country='Argentina' where Born='Villa Maria Cordoba';
+update born_clean set born_country='Kenya' where Born='Kenya';
+update born_clean set born_country='United States' where Born='Lithonia GA';
+update born_clean set born_country='United States' where Born='Walnut Creek';
+update born_clean set born_country='Italy' where Born='Urbino';
+update born_clean set born_country='Netherlands' where Born='Blaricum';
+update born_clean set born_country='Russian Federation' where Born='Rostov-on-Don';
+update born_clean set born_country='Argentina' where Born='Marco Juarez';
+update born_clean set born_country='Italy' where Born='Genova';
+update born_clean set born_country='Mexico' where Born='Acapulco';
+update born_clean set born_country='Spain' where Born='Santa Cruz de Bezana';
+update born_clean set born_country='United States' where Born='durham nc USA';
+update born_clean set born_country='Italy' where Born='Erice';
+update born_clean set born_country='France' where Born='carhaix plougher';
+update born_clean set born_country='France' where Born='Pouillon';
+update born_clean set born_country='United States' where Born='Winston Salem';
+update born_clean set born_country='China' where Born='sichuan suining';
+update born_clean set born_country='United Kingdom' where Born='Hampstead';
+update born_clean set born_country='Japan' where Born='Saitma';
+update born_clean set born_country='United States' where Born='Does Moines';
+update born_clean set born_country='Spain' where Born='Las palmas';
+update born_clean set born_country='Spain' where Born='San Sebastian';
+update born_clean set born_country='United Kingdom' where Born='High Wycombe';
+update born_clean set born_country='France' where Born='Susy En Brie';
+update born_clean set born_country='Czech Republic' where Born='Moravska Trebova' or born_country='Czech Repbulic';
+update born_clean set born_country='China' where Born='Hunan';
+update born_clean set born_country='South Africa' where Born='Edenvale';
+update born_clean set born_country='China' where Born='HEILONGJIANG';
+update born_clean set born_country='Australia' where Born='Port Lincoln';
+update born_clean set born_country='Greece' where Born Like 'C_ret';
+update born_clean set born_country='France' where Born='Saint Etienne';
+update born_clean set born_country='France' where Born='Schoelcher';
+update born_clean set born_country='Ukraine' where Born='dnepropetrovsk';
+update born_clean set born_country='Netherlands' where Born='Heythuysen';
+update born_clean set born_country='Austria' where Born='Klagenfurt';
+update born_clean set born_country='Chile' where Born='Providencia';
+update born_clean set born_country='Japan' where Born='Hyougo';
+update born_clean set born_country='Indonesia' where Born='Samosir Island';
+update born_clean set born_country='Australia' where Born='Port Pirie';
+update born_clean set born_country='Argentina' where Born='Capital Federal';
+update born_clean set born_country='Australia' where Born='Monto';
+update born_clean set born_country='Germany' where Born='Wasserburg am Inn';
+update born_clean set born_country='Belarus' where Born='Barakovichi';
+update born_clean set born_country='Germany' where Born='Muenster';
+update born_clean set born_country='France' where Born='Saint Jean de Maurienne';
+update born_clean set born_country='Japan' where Born='nishinomiya';
+update born_clean set born_country='Germany' where Born Like 'M_nchengladbach';
+update born_clean set born_country='France' where Born='Saint-julien-en-genevois';
+update born_clean set born_country='France' where Born='Sucy En Brie';
+update born_clean set born_country='Korea, Republic of' where Born='Gokseong, Korea' or Born='Ulju, South Korea' or Born='Dae Gu, Korea' or Born='Ulsan, Korea' or Born='Seoul, Korea (South)' or Born='Hoingsung, Korea' or Born='Busan, South Korea' or Born='Busan, Korea' or Born='Sangju, South Korea' or Born='Yong-In, Korea' or Born='Jecheon, South Korea' or Born='Suwon' or Born='Seoul, Korea' or Born='Chisinau, Moldova' or Born='Seoul, South Korea';
+update born_clean set born_country='Congo' where born_country='Democratic Republic of the Congo';
+update born_clean set born_country='Curaçao' where born_country='Curacao';
+
+ALTER TABLE players add column country VARCHAR(255);
+
+UPDATE players,born_clean SET players.country=born_clean.born_country WHERE players.born=born_clean.born;
+
+SELECT country
+FROM players
+WHERE country NOT IN (
+    SELECT country
+    FROM countries
+);
+
+
+CREATE TABLE location_clean (
+  location VARCHAR(255),
+  location_country VARCHAR(255)
+);
+
+
+INSERT INTO location_clean(location,location_country) 
+SELECT DISTINCT location as location, SUBSTRING_INDEX(location,',',-1) as location_country 
+FROM tournaments 
+WHERE INSTR(location,',')>0;
+
+
+INSERT INTO location_clean(location) 
+SELECT DISTINCT location as location 
+FROM tournaments 
+WHERE NOT INSTR(location, ',')>0;
+
+
+UPDATE location_clean SET location_country=Trim(substring_index(location_country,",",-1)); 
+
+UPDATE location_clean, cities SET location_country=country where location_clean.location=cities.city; 
+
+UPDATE location_clean, countries SET location_country=country WHERE location=country AND NOT INSTR(location,',')>0; 
+
+
+update location_clean set location_country='Canada' where location_country='Alberta' or location_country = 'Canda' or location_country = 'Ontaria';
+update location_clean set location_country='Turkey' where location_country='Antalya';
+update location_clean set location_country='United States' where location_country='AR' or location_country='United S' or location_country='OK' or location_country='Texas' or location_country='U.S.A' or location_country='U.S.A.' or location_country='USA';
+update location_clean set location_country='Argentina' where location_country='ARG' or location_country='Arg.' or location_country='Argent';
+update location_clean set location_country='Austria' where location_country='Aut.';
+update location_clean set location_country='Spain' where location_country='Bakio' or location_country='Melilla' or location_country='Valldoreix';
+update location_clean set location_country='Serbia' where location_country='Belgrade' or location_country='SCG' or location_country='SErgia &amp; M' or location_country='Yug.' or location='Novi Sad, Yugoslavia' or location='Belgrade, Yugoslavia';
+update location_clean set location_country='Bolivia, Plurinational State of' where location_country='Bolivia';
+update location_clean set location_country='Bosnia and Herzegovina' where location_country='Bosnia' or location_country='Bosnia &amp; Herzegovi' or location_country='Bosnia &amp; Herzegovina';
+update location_clean set location_country='France' where location_country='Bourg-en-Bresse' or location_country='Forbach' or location_country='Lesser Antilles' or location_country='Uriage';
+update location_clean set location_country='Brazil' where location_country='BRA' or location_country='Braz';
+update location_clean set location_country='United Kingdom' where location_country='Britain' or location_country='England' or location_country='Great Britain'or location_country='Scotland' or location_country='UK' or location_country='Wales' or location_country='GBR';
+update location_clean set location_country='Brunei Darussalam' where location_country='Brunei';
+update location_clean set location_country='Taiwan, Province of China' where location_country='Chinese Ta' or location_country='Chinese Taip' or location_country='Chinese Taipei' or location_country='Taipei' or location_country='Taiwan' or location_country='TPE';
+update location_clean set location_country="Côte d'Ivoire" where location_country='CIV' or location_country='Ivory Coast' or location='Ivory Coast' or location='Abidjan, CIV' or location='Abidjan, Ivory Coast' or location='Abidjan';
+update location_clean set location_country='Colombia' where location_country='COL' or location_country='Col' or  location_country='Columbia';
+update location_clean set location_country='Croatia' where location_country='Crotia' or location='Zagreb, Yugoslavia' or location='Umag, Yugoslavia';
+update location_clean set location_country='Curaçao' where location_country='Curacao' or location='Curacao, Dutch Antil';
+update location_clean set location_country='Czech Republic' where location_country='CZE' or location_country='Czech Rep.' or location_country='Czech Repub' or location_country='Czechoslovakia' or location='Czechoslovakia';
+update location_clean set location_country='Dominican Republic' where location_country='D.R.';
+update location_clean set location_country='Denmark' where location_country='DEN.';
+update location_clean set location_country='Qatar' where location_country='Doha';
+update location_clean set location_country='Netherlands' where location_country='Dutch Anti' or location_country='NED' or location_country='The Hague' or location_country='The Nethe' or location_country='The Netherlands';
+update location_clean set location_country='Luxembourg' where location_country='Esch-sur-Alzette';
+update location_clean set location_country='Egypt' where location_country='Eygpt';
+update location_clean set location_country='Fiji' where location_country='Fiji Island' or location='Pacific Oceania';
+update location_clean set location_country='Guatemala' where location_country='GUA';
+update location_clean set location_country='Israel' where location_country='Hasharon' or location_country='ISR' or location_country='Isra';
+update location_clean set location_country='Hong Kong' where location_country='HKG';
+update location_clean set location_country='Hungary' where location_country='Hu' or location_country='Hunary';
+update location_clean set location_country='Indonesia' where location_country='INA';
+update location_clean set location_country='Iran, Islamic Republic of' where location_country='Iran' or location='Iran';
+update location_clean set location_country='Italy' where location_country='Ita' or location_country='Sardinia';
+update location_clean set location_country='Korea, Republic of' where location_country='Korea' or location_country='South Korea';
+update location_clean set location_country='Macedonia, the Former Yugoslav Republic of' where location_country='Macedona' or location_country='Macedonia' or location='Macedonia';
+update location_clean set location_country='Malaysia' where location_country='MAS';
+update location_clean set location_country='Mexico' where location_country='Meixco';
+update location_clean set location_country='Moldova, Republic of' where location_country='Moldova' or location_country='Moldovia';
+update location_clean set location_country='Tunisia' where location_country='Monastir';
+update location_clean set location_country='New Caledonia' where location_country='New Caledoni';
+update location_clean set location_country='New Zealand' where location_country='New Zealan' or location_country='NZ' or location_country='NZL';
+update location_clean set location_country='Philippines' where location_country='PHI';
+update location_clean set location_country='Réunion' where location_country='Reunion Island';
+update location_clean set location_country='Russian Federation' where location='Russia' or location='Soviet Union' or location_country='Russia';
+update location_clean set location_country='South Africa' where location_country='SA' or location_country='South' or location_country='South  Africa';
+update location_clean set location_country='El Salvador' where location_country='Salvador' or location_country='San Salvador';
+update location_clean set location_country='Chile' where location_country='Santiago';
+update location_clean set location_country='Slovakia' where location_country='Slovak' or location_country='Slovak R' or location_country='Slovak Republic' or location_country='Slovkia'; 
+update location_clean set location_country='Slovenia' where location_country='Solvenia' or  location='Ljubljana, Yugoslavia';
+update location_clean set location_country='Switzerland' where location_country='Switz.';
+update location_clean set location_country='Syrian Arab Republic' where location_country='Syria' or location='Syria';
+update location_clean set location_country='Australia' where location_country='Tasmania' or location_country='Victoria';
+update location_clean set location_country='Thailand' where location_country='THA';
+update location_clean set location_country='Trinidad and Tobago' where location_country='TRI';
+update location_clean set location_country='United Arab Emirates' where location_country='U.A.E.';
+update location_clean set location_country='Uruguay' where location_country='Uraguay' or location_country='URU';
+update location_clean set location_country='Uzbekistan' where location_country='Uzb.';
+update location_clean set location_country='Venezuela, Bolivarian Republic of' where location_country='Venezuela';
+update location_clean set location_country='Viet Nam' where location_country='Vietnam' or location='Vietnam';
+update location_clean set location_country='Germany' where location_country='Wetzlar';
+update location_clean set location_country='Poland' where location_country='Wrocklaw' or location='Belchatow, Yugoslavia';
+update location_clean set location_country='Montenegro' where location='Budva, Yugoslavia';
+update location_clean set location_country="Lao People's Democratic Republic" where location='Laos';
+update location_clean set location_country='Bolivia, Plurinational State of' where location='Bolivia/Chile' or location='Santa Cruz de la Sie' or  location='Bolivia';
+update location_clean set location_country='Botswana' where location='Botwana';
+update location_clean set location_country='Brazil' where location='Brazi' or location='Bahia' or location='Florianapolis';
+update location_clean set location_country='Brunei Darussalam' where location='Brunei';
+update location_clean set location_country='Netherlands' where location='The Netherlands' or location='Elndhoven';
+update location_clean set location_country='Austria' where location='Portschach';
+update location_clean set location_country='United States' where location='U.S.A.' or location='Caribbean';
+update location_clean set location_country='United Kingdom' where location='Great Britain' or location='Devon' or location='England';
+update location_clean set location_country='Bosnia and Herzegovina' where location='Bosnia &amp; Herzegovina';
+update location_clean set location_country='Luxembourg' where location='Mondorf-Les-Bains' or location='Esch/Alzette';
+update location_clean set location_country='Korea, Republic of' where location='Korea' or location='South Korea';
+update location_clean set location_country='Dominican Republic' where location='Domincan Republic';
+update location_clean set location_country='Australia' where location='West Perth';
+update location_clean set location_country='Spain' where location='Palma de Mallorca';
+update location_clean set location_country='Egypt' where location='Sharm El Sheikh' or location='Cairo, Egpyt';
+update location_clean set location_country='France' where location='Angleur - Liege';
+update location_clean set location_country='Ukraine' where location='Novaya Kakhovka';
+update location_clean set location_country='Uruguay' where location='Urugay';
+update location_clean set location_country='Taiwan, Province of China' where location='Chinese Taipei';
+update location_clean set location_country='United Arab Emirates' where location='U.A.E.';
+update location_clean set location_country='Malaysia' where location='Kuala Lampur';
+update location_clean set location_country='Mexico' where location='Mexica';
+update location_clean set location_country='Cuba' where location='Ciudad de Habana';
+update location_clean set location_country='Philippines' where location='Manilla' or location='Phillipines';
+update location_clean set location_country='Italy' where location='Portoroz';
+update location_clean set location_country='Slovakia' where location='Slovak Republic';
+update location_clean set location_country='Venezuela, Bolivarian Republic of' where location='Venezeuela';
+update location_clean set location_country='United Kingdom' where location='TBC';
+update location_clean set location_country='United States' where location='TBD';
+update location_clean set location_country='Serbia' where location='Serbia &amp; Montenegro' or location='Yugoslavia';
+
+
+SELECT * FROM location_clean WHERE location_country IS NULL;
+
+
+ALTER TABLE tournaments ADD COLUMN country VARCHAR(255);
+
+
+UPDATE tournaments, location_clean SET tournaments.country = location_clean.location_country WHERE tournaments.location = location_clean.location;
+
+
+update tournaments set country='Botswana' where tournament='Botswana F1';
+update tournaments set country='Egypt' where tournament='Egypt F1' or tournament='Egypt F2' or tournament='Egypt F3';
+update tournaments set country='France' where tournament='France F13';
+update tournaments set country='United Kingdom' where tournament='Great Britain F7';
+update tournaments set country='India' where tournament='India F4' or tournament='India F5';
+update tournaments set country='Italy' where tournament='Italy F10' or tournament='Italy F4' or tournament='Italy F5' or tournament='Italy F9';
+update tournaments set country='United States' where tournament='U.S.A. F13' or tournament='U.S.A. F21' or tournament='U.S.A. F29' or tournament='U.S.A. F32' or tournament='U.S.A. F5';
+update tournaments set country='Zimbabwe' where tournament='Zimbabwe F1';
+
+
+SELECT country
+FROM tournaments
+WHERE country NOT IN (
+    SELECT country
+    FROM countries
+);
+
+ALTER TABLE players ADD PRIMARY KEY(link_player);
+
+SELECT * FROM tournaments WHERE tournament='Mexico F10' AND end_date='0000-00-00';
+DELETE FROM tournaments WHERE tournament='Mexico F10' AND end_date='0000-00-00';
+
+ALTER TABLE tournaments ADD PRIMARY KEY(tournament,start_date);
+
+ALTER TABLE games ADD id int NOT NULL AUTO_INCREMENT primary key;
+
+ALTER TABLE countries ADD PRIMARY KEY(country);
+
+ALTER TABLE players ADD CONSTRAINT fk_players_countries 
+FOREIGN KEY (country) REFERENCES countries(country) 
+on delete restrict on update cascade;
+
+ALTER TABLE tournaments ADD CONSTRAINT fk_tournaments_countries 
+FOREIGN KEY (country) REFERENCES countries(country) 
+on delete restrict on update cascade;
+
+ALTER TABLE games ADD CONSTRAINT fk_games_players 
+FOREIGN KEY (link_player) REFERENCES players(link_player) 
+on delete restrict on update cascade;
+
+ALTER TABLE games ADD CONSTRAINT fk_games_tournaments 
+FOREIGN KEY (tournament, start_date) REFERENCES tournaments(tournament, start_date) 
+on delete restrict on update cascade;
+
+
+
+
+-- Exportar para csvs para trabalharmos em python; 

@@ -1,0 +1,440 @@
+// Comando de import 
+mongoimport --db atp --collection atp --drop --file '/Users/joaodias/Documents/BD/atpplayers.json'
+
+// Ver estrutura do json
+db.atp.find()
+
+// Criar coleções 
+db.createCollection("players");
+db.createCollection("tournaments");
+db.createCollection("games");
+
+// Acrescentar jogadores à coleção de jogadores; / _id no $group especifica a chave do grupo que é o link de cada jogador, para evitar casos em que o jogador possa ter o mesmo nome / $$ROOT é para nao perder o documento original que é guardado em doc.
+// Sort por id (1 significa ASC order) 
+// insert one vai buscar os dados originais guardados no doc com a ROOT 
+db.atp.aggregate([
+    { $group: { _id: "$LinkPlayer", doc: { $first: "$$ROOT" } } },
+    { $sort: { "_id": 1 } }
+]).forEach(function(group) {
+    db.players.insertOne({ 
+        PlayerName: group.doc.PlayerName, 
+        Born: group.doc.Born, 
+        Height: group.doc.Height, 
+        Hand: group.doc.Hand, 
+        LinkPlayer: group.doc.LinkPlayer 
+    });
+});
+
+// Contar número de jogadores
+db.players.countDocuments()
+
+
+// Verificar a coleção de players após inserção dos dados; 
+db.players.find()
+
+
+// Verificar jogadores com os nomes repetidos
+db.players.aggregate([
+  {
+    $group: {
+      _id: "$PlayerName",
+      count: { $sum: 1 }
+    }
+  },
+  {
+    $match: {
+      count: { $gt: 1 }
+    }
+  }
+])
+
+
+
+// Permite logo ver alguns problemas como Born = '' / Height = 'NA' / Hand = Primary Hand, Backhand
+// Ver missing values em Born
+db.players.aggregate([
+    {
+        $match: {
+            $or: [
+                { Born: { $exists: false } },
+                { Born: '' }
+            ]
+        }
+    },
+    {
+        $count: "totalMissing"
+    }
+])
+
+
+// Ver missing values em Height
+db.players.aggregate([
+    {
+        $match: {
+            $or: [
+                { Height: { $exists: false } },
+                { Height: 'NA' }
+            ]
+        }
+    },
+    {
+        $count: "totalMissing"
+    }
+])
+
+
+// Ver missing values em Hand
+db.players.aggregate([
+    {
+        $match: {
+            $or: [
+                { Hand: { $exists: false } },
+                { Hand: 'null' }
+            ]
+        }
+    },
+    {
+        $count: "totalMissing"
+    }
+])
+
+
+// Para aprofundar esta pesquisa
+db.players.distinct('Hand')
+
+
+// Limpeza e tratamento do atributo Hand
+db.players.update(
+   {},
+   [
+      {
+         $set: {
+            HandParts: { $split: ["$Hand", ", "] }
+         }
+      },
+      {
+         $set: {
+            Forehand: { $arrayElemAt: ["$HandParts", 0] },
+            Backhand: {
+               $cond: {
+                  if: { $eq: [{ $size: "$HandParts" }, 1] },
+                  then: null,
+                  else: { $arrayElemAt: ["$HandParts", 1] }
+               }
+            }
+         }
+      },
+      {
+         $unset: "HandParts"
+      }
+   ],
+   { multi: true }
+)
+
+
+// Ver distinct Backhand
+db.players.distinct("Backhand")
+
+
+// Ver jogadores com backhand nulo
+db.players.find({"Backhand":null})
+
+
+// Tratar nulos backhand
+db.players.updateMany(
+  { Backhand: null },
+  { $set: { Backhand: "Unknown Backhand" } }
+)
+
+
+// Análise da Forehand
+db.players.distinct("Forehand")
+
+
+// Tratar nulos forehand
+db.players.updateMany(
+  { Forehand: 'null' },
+  { $set: { Forehand: "Unknown Forehand" } }
+)
+
+
+// Análise Height
+db.players.distinct("Height")
+
+
+// Verificar os valores estranhos nas alturas
+db.players.find({Height: {$lt: 140}})
+
+
+// Count valores estranhos nas alturas
+db.players.aggregate([
+    {
+        $match: { 
+          $or: [
+                { Height: {$lt: 140}},
+                { Height: 510}
+            ]
+        }
+    },
+    {
+        $count: "Count"
+    }
+])
+
+// Count valores estranhos nas alturas
+db.players.aggregate([
+    {
+        $match: { 
+          $or: [
+                { Height: {$lt: 140}},
+                { Height: 'NA' },
+                { Height: 510}
+            ]
+        }
+    },
+    {
+        $count: "Count"
+    }
+])
+
+// Finds alturas estranhas
+db.players.find({Height:0})
+db.players.find({Height:3})
+db.players.find({Height:15})
+db.players.find({Height:71})
+db.players.find({Height:510})
+
+
+// TOURNAMENTS 
+// Adicionar info à coleção de torneios
+db.atp.aggregate([
+    {
+        $group: {
+            _id: { Tournament: "$Tournament", Date: "$Date", Location: "$Location" },
+            doc: { $first: "$$ROOT" }
+        }
+    },
+    { $sort: { "_id.Tournament": 1, "_id.Date": 1 } }
+]).forEach(function(group) {
+    db.tournaments.insertOne({ 
+        Tournament: group.doc.Tournament,
+        Location: group.doc.Location, 
+        Date: group.doc.Date, 
+        Prize: group.doc.Prize
+    });
+});
+
+
+// Ver estrutura torneios
+db.tournaments.find()
+
+
+// Contagem torneios
+db.tournaments.countDocuments()
+
+
+// Ver torneios duplicados 
+db.tournaments.aggregate([
+  {
+    $group: {
+      _id: {Tournament: "$Tournament", Date: "$Date"},
+      count: { $sum: 1 }
+    }
+  },
+  {
+    $match: {
+      count: { $gt: 1 }
+    }
+  }
+])
+
+// Apagar Valencia USA
+db.tournaments.deleteMany({
+  "Tournament": "Valencia",
+  "Location": "Valencia, CA, U.S.A."
+});
+
+
+// Corrigir prizes
+db.tournaments.find().forEach(function(doc) {
+    db.tournaments.updateMany(
+        { _id: doc._id },
+        {
+            $set: {
+                Prize: parseInt(doc.Prize.replace(/[^\d]/g, ''), 10)
+            }
+        }
+    );
+});
+
+
+// Ver tipos de prémios
+db.tournaments.distinct("Prize")
+
+
+// Torneios sem prémio
+db.tournaments.find({Prize:NaN}).count()
+
+
+// Criar start e end Date
+db.tournaments.update(
+   {},
+   [
+      {
+         $set: {
+            DateParts: { $split: ["$Date", " - "] }
+         }
+      },
+      {
+         $set: {
+            StartDate: { $arrayElemAt: ["$DateParts", 0] },
+            EndDate: { $arrayElemAt: ["$DateParts", 1] }
+         }
+      },
+      {
+         $unset: "DateParts"
+      }
+   ],
+   { multi: true }
+)
+
+
+// Torneios sem end Date
+db.tournaments.find({EndDate: null}).sort({StartDate: -1})
+db.tournaments.find({EndDate: null}).count()
+
+
+// GAMES 
+// Adicionar info à coleção de jogos
+db.atp.find().forEach(function(doc) { 
+    db.games.insertOne({
+        PlayerName: doc.PlayerName,
+        LinkPlayer: doc.LinkPlayer,
+        Tournament: doc.Tournament, 
+        Location: doc.Location,
+        Date: doc.Date,
+        Ground: doc.Ground, 
+        GameRound: doc.GameRound, 
+        GameRank: doc.GameRank, 
+        Oponent: doc.Oponent, 
+        WL: doc.WL, 
+        Score: doc.Score 
+    }); 
+});
+
+
+// Ver estrutura dos jogos
+db.games.find()
+
+
+// contar número de jogos
+db.games.countDocuments()
+
+
+// aprofundar analise nos registos WL
+db.games.distinct("WL")
+db.games.find({WL:""})
+
+
+//apagar byes
+db.games.deleteMany({Oponent:"bye"});
+
+
+// Verificar se ainda há torneios sem WL atribuidos 
+db.games.find({WL:""}).count()
+
+
+// Remover os 21 registos de jogos que nunca aconteceram
+db.games.deleteMany({WL:""});
+
+
+// jogos duplicados
+db.games.createIndex({ Date: 1, PlayerName: 1, Oponent: 1, GameRound: 1, Tournament: 1 });
+db.games.find({ WL: "W" }).forEach(function(doc) {
+    db.uniquegames.insertOne(doc);
+});
+db.uniquegames.createIndex({ PlayerName: 1, Oponent: 1, Date: 1, GameRound: 1, Tournament: 1 });
+db.games.find({ WL: "L" }).forEach(function(doc) {
+    db.gamesL.insertOne(doc);
+});
+db.gamesL.createIndex({ PlayerName: 1, Oponent: 1, Date: 1, GameRound: 1, Tournament: 1 });
+db.uniquegames.find({}, { PlayerName: 1, Oponent: 1, Tournament: 1, Date: 1, GameRound: 1 }).forEach(function(winDoc) {
+    db.gamesL.deleteMany({
+        PlayerName: winDoc.Oponent,
+        Oponent: winDoc.PlayerName,
+        Tournament: winDoc.Tournament,
+        Date: winDoc.Date,
+        GameRound: winDoc.GameRound
+    });
+});
+db.gamesL.find().forEach(function(doc) {
+    db.uniquegames.insertOne(doc);
+});
+
+
+// Atributo Ground
+db.uniquegames.distinct("Ground")
+
+// Ver torneios sem ground atríbuido 
+db.uniquegames.aggregate([
+    { $match: { Ground: "" } },
+    { $group: { _id: { Tournament: "$Tournament", Date: "$Date" } } }
+]);
+
+
+// Atualizar os valores de ground empty
+db.uniquegames.updateMany(
+  { Tournament: "M15 Antalya", Date: "2021.05.31 - 2021.06.06" },
+  { $set: { Ground: "Clay" } }
+);
+db.uniquegames.updateMany(
+  { Tournament: "M15 Cancun", Date: "2021.10.11 - 2021.10.17" },
+  { $set: { Ground: "Hard" } }
+);
+db.uniquegames.updateMany(
+  { Tournament: "M15 Opava", Date: "2021.11.15 - 2021.11.21" },
+  { $set: { Ground: "Carpet" } }
+);
+db.uniquegames.updateMany(
+  { Tournament: "ESP vs. FRG - EUROPE ZONE A QF", Date: "1980.03.03 - 1980.03.09" },
+  { $set: { Ground: "Clay" } }
+);
+db.uniquegames.updateMany(
+  { Tournament: "POL vs. IRI - EUROPE ZONE A PRELIMINARY QF", Date:  "1978.03.13 - 1978.03.19"},
+  { $set: { Ground: "Clay" } }
+);
+db.uniquegames.updateMany(
+  { Tournament: "COL vs. USA - N&amp;C AMERICA FINAL", Date:  "1974.01.07 - 1974.01.13"},
+  { $set: { Ground: "Clay" } }
+);
+
+
+// Criar start e end Date
+db.uniquegames.update(
+   {},
+   [
+      {
+         $set: {
+            DateParts: { $split: ["$Date", " - "] }
+         }
+      },
+      {
+         $set: {
+            StartDate: { $arrayElemAt: ["$DateParts", 0] },
+            EndDate: { $arrayElemAt: ["$DateParts", 1] }
+         }
+      },
+      {
+         $unset: "DateParts"
+      }
+   ],
+   { multi: true }
+)
+
+
+// exports
+mongoexport --db=atp --collection=players --type=csv --fields "PlayerName,Born,Height,LinkPlayer,Backhand,Forehand" --out='/Users/joaodias/Documents/BD/players.csv'
+
+mongoexport --db=atp --collection=tournaments --type=csv --fields "Tournament,Location,Prize,StartDate,EndDate" --out='/Users/joaodias/Documents/BD/tournaments.csv'
+
+mongoexport --db=atp --collection=uniquegames --type=csv --fields "PlayerName,LinkPlayer,Tournament,StartDate,EndDate,Ground,GameRound,GameRank,Oponent,WL,Score" --out='/Users/joaodias/Documents/BD/games.csv'

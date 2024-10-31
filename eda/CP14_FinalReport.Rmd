@@ -1,0 +1,847 @@
+---
+title: "Relatório Final do inquérito OBSERVA II"
+output: html_document
+date: "2023-03-22"
+---
+
+```{r setup, include=FALSE}
+
+# Importação das bibliotecas necessárias
+library(openxlsx)
+library(tidyverse)
+library(descr)
+library(flextable)
+library(moments)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(forcats)
+
+# Carregar a bd
+bd <-read.xlsx("AED_CP14_Ambiente.xlsx")
+df <- data.frame(bd)
+
+# Alterar o nome das variáveis
+names(bd)[3] <- c("Sexo")
+names(bd)[4] <- c("Idade (anos completos)")
+names(bd)[5] <- c("Nº de elementos do agregado familiar")
+names(bd)[10] <- c("Preferência para viver")
+names(bd)[11] <- c("Produção industrial")
+names(bd)[12] <- c("Crescimento económico")
+names(bd)[13] <- c("Aumento do consumo")
+names(bd)[14] <- c("Industrialização da agricultura")
+names(bd)[15] <- c("Concentração urbana")
+
+# Alterar as respostas de "preferência para viver" para facilitar interpreação
+bd$`Preferência para viver` <- ifelse(bd$`Preferência para viver` == 1, "Litoral", 
+                                     ifelse(bd$`Preferência para viver` == 2, "Interior",
+                                            bd$`Preferência para viver`))
+
+# Identificar as variáveis que têm valores omissos
+missings <- colnames(bd)[colSums(is.na(bd)) > 0]
+missings
+
+# Identificar os valores omissos na variável "Produção industrial"
+missings_prod_industrial <- subset(bd, is.na(`Produção industrial`))
+
+# Imputar medianas na variável "Produção industrial"
+mediana_prod_industrial <- median(bd$`Produção industrial`, na.rm = TRUE)
+bd$`Produção industrial` <- ifelse(is.na(bd$`Produção industrial`), mediana_prod_industrial, bd$`Produção industrial`)
+
+# Trocar a escala onde 1 - muito importante e 4 - nada importante para 1 - nada importante e 4 - muito importante para facilitar interpretação
+for (i in 1:nrow(bd)) {
+  bd[i,"Produção industrial"] <- 5 - bd[i,"Produção industrial"]
+  bd[i,"Crescimento económico"] <- 5 - bd[i,"Crescimento económico"]
+  bd[i,"Aumento do consumo"] <- 5 - bd[i,"Aumento do consumo"]
+  bd[i,"Industrialização da agricultura"] <- 5 - bd[i,"Industrialização da agricultura"]
+  bd[i,"Concentração urbana"] <- 5 - bd[i,"Concentração urbana"]
+}
+
+# Imputar códigos de não resposta "99"
+bd$`Crescimento económico` <- ifelse(is.na(bd$`Crescimento económico`), 99, bd$`Crescimento económico`)
+bd$`Aumento do consumo` <- ifelse(is.na(bd$`Aumento do consumo`), 99, bd$`Aumento do consumo`)
+bd$`Industrialização da agricultura` <- ifelse(is.na(bd$`Industrialização da agricultura`), 99, bd$`Industrialização da agricultura`)
+bd$`Concentração urbana` <- ifelse(is.na(bd$`Concentração urbana`), 99, bd$`Concentração urbana`)
+bd$Dependência.das.resoluções.ambientais <- ifelse(is.na(bd$Dependência.das.resoluções.ambientais), 99, bd$Dependência.das.resoluções.ambientais)
+bd$Temas.procurados.em.jornais.e.revistas <- ifelse(is.na(bd$Temas.procurados.em.jornais.e.revistas), 99, bd$Temas.procurados.em.jornais.e.revistas)
+bd$Medidas.governo <- ifelse(is.na(bd$Medidas.governo), 99, bd$Medidas.governo)
+
+```
+
+### Nota introdutória
+
+O presente relatório foi elaborado no âmbito da unidade curricular de Análise Exploratória de Dados e visa analisar e interpretar os resultados obtidos do inquérito "OBSERVA II", desenvolvido para determinar atitudes, comportamentos, cultura ambiental, opiniões e expectativas dos diferentes estratos populacionais relativamente ao estado do ambiente, à conservação da natureza, ao ordenamento do território e a outros temas associados ao ambiente. Neste documento pode ver-se a análise a um excerto das respostas obtidas na grande Lisboa.
+
+### Análise geral do perfil sociodemográfico dos inquiridos
+
+Para dar início à análise, começou-se por analisar o perfil sociodemográfico dos inquiridos, de forma a perceber se determinadores padrões de resposta no inquérito podem (ou não) ser associados a tais perfis. Esta análise visa aprofundar o conhecimento da amostra através da compreensão das suas características. 
+
+
+```{r, echo = FALSE}
+
+tab_Sexo1 <- as.integer(table(bd$Sexo))
+tab_Sexo2 <- round((prop.table(tab_Sexo1)*100), 1)
+
+tab_Sexo <- cbind(tab_Sexo1, tab_Sexo2)
+colnames(tab_Sexo) <- c("N", "%")
+row.names(tab_Sexo) <- unique(bd$Sexo)
+
+knitr::kable(tab_Sexo, align = "c")
+
+```
+
+<div style="text-align:center">
+###### Tabela 1 - Tabela de frequências por sexo
+</div>  
+
+A amostra é constituida por um total de 413 respostas. Conforme se pode ver na tabela acima, no que diz respeito ao sexo, há uma maior predominância das respostas femininas, que perfazem 60.3% do total de inquiridos. 
+
+```{r, echo = FALSE}
+
+tab_Res1 <- as.integer(table(bd$`1.6.1..Distrito.de.residência`))
+tab_Res2 <- round((prop.table(tab_Res1)*100), 1)
+
+tab_Res <- cbind(tab_Res1, tab_Res2)
+colnames(tab_Res) <- c("N", "%")
+row.names(tab_Res) <- unique(bd$`1.6.1..Distrito.de.residência`)
+
+knitr::kable(tab_Res, align = "c")
+
+```
+
+<div style="text-align:center">
+###### Tabela 2 - Tabela de frequências por distrito de residência
+</div>  
+
+Já no que diz respeito à análise do distrito de residência, 75.1% dos inquiridos são de Lisboa. Contudo, é importante ter em consideração que o objeto de análise contém apenas um excerto das respostas, correspondente à região da grande Lisboa. 
+
+<div style="text-align:center">
+```{r, echo = FALSE, warning=FALSE}
+
+ggplot(bd, aes(x = `Nº de elementos do agregado familiar`)) +
+  geom_bar(stat="count", fill = "darkblue", color = "white") +
+  scale_y_continuous(limits = c(0, 150)) + geom_text(stat = "count", aes(label = ..count..), vjust = -0.5, size=3) + scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8)) + 
+  labs(x = "Número de elementos do agregado familiar",
+       y = "Frequência")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 1 - Gráfico de barras do número de elementos do agregado familiar
+</div>  
+
+Conforme se pode ver pela análise da figura acima, 260 inquiridos vivem com 2 ou 3 pessoas. Esta informação apresenta-se em conformidade com os dados dos últimos censos, que revelaram que a dimensão média dos agregados domésticos privados em Lisboa ronda as 2/3 pessoas [1]. Já a nível nacional, os agregados com duas pessoas continuam os mais prevalentes (33,3%) [1].  
+
+<div style="text-align:center">
+```{r, echo = FALSE}
+
+ggplot(bd, aes(x = `Idade (anos completos)`)) +
+  geom_histogram(breaks = c(15, 25, 35, 45, 55, 65, 75, 85), fill = "darkblue", color = "white") + scale_y_continuous(limits = c(0, 125)) + scale_x_continuous(breaks = c(15, 25, 35, 45, 55, 65, 75), labels = c("15", "25", "35", "45", "55", "65", "75")) + 
+  labs(x = "Idades",
+       y = "Frequência")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 2 - Histograma com a distribuição das idades
+</div>  
+
+O histograma acima mostra a distribuição das idades dos inquiridos e a sua assimetria é justificada pelo maior número de respostas dadas pelos jovens com idades compreendidas entre os 15 e os 24 anos. 
+
+```{r, echo = FALSE}
+
+n <- length(bd$`Idade (anos completos)`)
+media <- round(mean(bd$`Idade (anos completos)`,na.rm=TRUE),1)
+mediana <- median(bd$`Idade (anos completos)`,na.rm=TRUE)
+desvpadr <- round(sd(bd$`Idade (anos completos)`, na.rm=TRUE),1)
+varianc <- round(var(bd$`Idade (anos completos)`, na.rm=TRUE),1)
+minimo <- min(bd$`Idade (anos completos)`, na.rm=TRUE)
+maximo <- max(bd$`Idade (anos completos)`, na.rm=TRUE)
+firstqt <- round(quantile(bd$`Idade (anos completos)`, 0.25, na.rm=TRUE),1)
+thirdqt <- round(quantile(bd$`Idade (anos completos)`, 0.75, na.rm=TRUE), 1)
+assimetria <- round(skewness(bd$`Idade (anos completos)`, na.rm=TRUE),1)
+curtose <- round(kurtosis(bd$`Idade (anos completos)`, na.rm=TRUE),1)
+
+Valor <- c(n, media,mediana,  desvpadr, varianc, minimo, maximo, firstqt, thirdqt, assimetria, curtose)
+Medidas <- c("N", "Média", "Mediana", "Desvio padrão", "Variância", "Mínimo", "Máximo", "Quartil 1", "Quartil 3", "Assimetria", "Curtose")
+table_agreg <- data.frame(Medidas,Valor)
+ftab_agreg <- flextable(table_agreg)
+
+matriz_agreg <- as.matrix(table_agreg)
+knitr::kable(matriz_agreg)
+
+```
+
+<div style="text-align:center">
+###### Tabela 3 - Tabela de medidas descritivas para a variável Idade
+</div>  
+
+Ao aprofundar a análise com a tabela de medidas descritivas para a idade dos inquiridos, conseguimos perceber que o estudo contém respostas de inquiridos com idades compreendidas entre os 15 e os 85 anos. 
+
+
+<div style="text-align:center">
+```{r, echo = FALSE, warning=FALSE}
+
+ggplot(bd, aes(x = `Grau.de.instrução.do.inquirido`)) +
+  geom_bar(stat="count", fill = "darkblue", color = "white") + scale_y_continuous(limits = c(0, 200)) + geom_text(stat = "count", aes(label = ..count..), vjust = -0.5, size=3) + labs(x = "Grau de instrução",
+       y = "Frequência")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 3 - Gráfico de barras com o grau de instrução do inquirido
+</div>  
+
+Ao nível das habilitações, é importante ter em consideração que um elevado volume de respostas (88.1%) é dado por pessoas que não seguiram para o ensino superior. Entre os graus mais representados nesta amostra, destaca-se o ensino secundário com 160 respostas, seguindo-se do ensino básico com 147 respostas. 
+
+### Análise das respostas ao questionário
+
+#### Preferência para viver
+
+<div style="text-align:center">
+```{r, echo = FALSE, warning=FALSE}
+
+data_pr_adj <- ifelse(bd$`Preferência para viver` == 99, "Não respondeu", bd$`Preferência para viver`)
+
+tab_pref_viver1 <- table(data_pr_adj)
+tab_pref_viver2 <- round((prop.table(tab_pref_viver1)*100), 1)
+
+tab_pref_viver <- cbind(tab_pref_viver1, tab_pref_viver2)
+colnames(tab_pref_viver) <- c("N", "%")
+
+tab_pref_viver_df <- as.data.frame(tab_pref_viver)
+tab_pref_viver_df <- tab_pref_viver_df[order(tab_pref_viver_df$N, decreasing = TRUE),]
+knitr::kable(tab_pref_viver_df, align = "c")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Tabela 4 - Tabela de frequências para a variável "Preferência para viver"
+</div>  
+
+No que diz respeito às respostas ao questionário, a maior preferência é dada pelo litoral de Portugal (70.9%). Apenas 22 dos 413 inquiridos optaram por não responder a esta questão.
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+tab <- table(bd$Sexo, data_pr_adj)
+tab2 <- round((prop.table(tab)*100), 1)
+
+colnames(tab) <- c("Interior", "Litoral", "Não respondeu")
+colnames(tab2) <- c("% Interior", "% Litoral", "% Não respondeu")
+
+tab_pref_viver_cr <- cbind(tab, tab2)
+rownames(tab_pref_viver_cr) <- c("Feminino", "Masculino")
+
+knitr::kable(tab_pref_viver_cr, align="c")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Tabela 5 - Tabela de contigência "Sexo" x "Preferência para viver"
+</div>  
+
+Ao analisar-se a preferência para viver, tendo em conta o género dos inquiridos, é possível perceber que 43.3% das mulheres preferem o litoral, face a 27.6% dos homens que dão preferência ao litoral. 
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+bins_idade <- cut(bd$`Idade (anos completos)`, breaks = seq(15, 85, 10), right = FALSE)
+cont_tab <- table(bins_idade, data_pr_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$bins_idade <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "bins_idade")
+
+ggplot(df_long, aes(x = bins_idade, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Faixa etária") + ylab("Frequência de resposta") + labs(fill = "Preferência para viver")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 4 - Gráfico de barras empilhadas "Faixa etária" x "Preferência para viver"
+</div>  
+
+A preferência para viver no litoral é mais evidente nas faixas etárias dos 25-34 anos e dos 55-64 anos, conforme se pode ver na figura acima. Contudo, o padrão de resposta mostra-se coerente entre todas as respostas dos inquiridos. 
+
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Grau.de.instrução.do.inquirido, data_pr_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$instrucao <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "instrucao")
+
+ggplot(df_long, aes(x = instrucao, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Grau de instrução") + ylab("Frequência de resposta") + 
+  labs(fill = "Preferência para viver") + scale_y_continuous(limits = c(0, 200))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 5 - Gráfico de barras empilhadas "Grau de instrução" x "Preferência para viver"
+</div>  
+
+Na imagem acima torna-se mais evidente que a maior preferência pelo interior é tido por pessoas com o ensino básico, ao passo que a esmagadora maioria dos inquiridos com o ensino superior mostrou ter uma preferência clara pelo litoral para viver.
+   
+    
+#### Impacto da produção industrial no ambiente
+
+<div style="text-align:center">
+```{r, echo = FALSE, warning=FALSE}
+
+ggplot(bd, aes(x = `Produção industrial`)) +
+  stat_summary(fun = "length", aes(y = `Produção industrial`), geom = "col", fill = "darkblue", color = "white") +
+  labs(x = "Importância para o ambiente", y = "Frequência de resposta") + scale_y_continuous(limits = c(0, 400)) +
+  coord_flip()
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 6 - Gráfico de barras horizontais do impacto da produção industrial no ambiente
+</div>  
+
+A figura acima ilustra as classificações atribuídas pelos inquiridos, numa escala onde 1 representa nada importante e 4 muito importante, no que diz respeito ao impacto que a produção industrial tem no ambiente. Tal como se pode constatar na imagem, a produção industrial revela-se entre as principais preocupações dos habitantes da grande Lisboa no que toca às questões ambientais.
+
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Sexo, bd$`Produção industrial`)
+
+df <- as.data.frame.matrix(cont_tab)
+df$Sexo <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "Sexo")
+
+ggplot(df_long, aes(x = Sexo, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Sexo") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto da produção industrial") + scale_y_continuous(limits = c(0, 300))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 7 - Gráfico de barras empilhadas "Sexo" x "Impacto da produção industrial no ambiente"
+</div>  
+
+De uma forma geral, a importância atribuída ao impacto da indústria no ambiente é alta e semelhante entre mulheres e homens. 
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bins_idade, bd$`Produção industrial`)
+
+df <- as.data.frame.matrix(cont_tab)
+df$bins_idade <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "bins_idade")
+
+ggplot(df_long, aes(x = bins_idade, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Faixa etária") + ylab("Frequência de resposta") + labs(fill = "Impacto da produção industrial")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 8 - Gráfico de barras empilhadas "Faixa etária" x "Impacto da produção industrial no ambiente"
+</div>  
+
+Embora as preocupações com o impacto da indústria no ambiente sejam muito altas entre todas as faixas etárias, de uma forma generalizada, a imagem acima revela que a faixa etária dos 15-24 anos, comparativamente às restantes, se mostra como a que menos importância atribui ao impacto que a indústria tem no ambiente.
+
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Grau.de.instrução.do.inquirido, bd$`Produção industrial`)
+
+df <- as.data.frame.matrix(cont_tab)
+df$instrucao <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "instrucao")
+
+ggplot(df_long, aes(x = instrucao, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Grau de instrução") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto da produção industrial") + scale_y_continuous(limits = c(0, 200))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 9 - Gráfico de barras empilhadas "Grau de instrução" x "Impacto da produção industrial no ambiente"
+</div>  
+
+Se a análise for feita ao nível das habilitações dos inquiridos, é possível concluir, a partir da imagem acima, que a importância dada ao impacto da produção industrial no ambiente por quem tem o ensino básico e secundário é inferior à importância dada por quem não tem diploma ou por quem terminou o ensino superior. Independentemente disso, de uma forma geral, a classificação de importância atribuída ao impacto da indústria no ambiente é alta.
+
+
+#### Impacto do crescimento económico no ambiente
+
+<div style="text-align:center">
+```{r, echo = FALSE, warning=FALSE}
+
+bd$cresc_adj <- ifelse(bd$`Crescimento económico` == 99, "Não respondeu", bd$`Crescimento económico`)
+
+bd$cresc_adj <- fct_relevel(bd$cresc_adj, "Não respondeu")
+
+ggplot(bd, aes(x = cresc_adj)) +
+  geom_bar(fill = "darkblue", color = "white") +
+  labs(x = "Importância para o ambiente", y = "Frequência de resposta") +
+  scale_y_continuous(limits = c(0, 200), breaks = seq(0, 200, by = 50)) +
+  coord_flip()
+
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 10 - Gráfico de barras horizontais do impacto do crescimento económico no ambiente
+</div>  
+
+Em termos gerais, a classificação mais atribuída ao impacto que o crescimento económico tem no ambiente foi 3, numa escala em que 1 representa nada importante e 4 muito importante. 
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Sexo, bd$cresc_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$Sexo <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "Sexo")
+
+ggplot(df_long, aes(x = Sexo, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Sexo") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto do crescimento económico") + scale_y_continuous(limits = c(0, 300))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 11 - Gráfico de barras empilhadas "Sexo" x "Impacto do crescimento económico no ambiente"
+</div>  
+
+Focando a análise nas respostas por sexo acerca do impacto do crescimento económico no ambiente, é possível concluir que as mulheres optaram mais vezes por não responder do que os homens, e os homens, de uma forma geral, atribuem menos importância ao impacto do crescimento económico no ambiente do que as mulheres. 
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bins_idade, bd$cresc_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$bins_idade <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "bins_idade")
+
+ggplot(df_long, aes(x = bins_idade, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Faixa etária") + ylab("Frequência de resposta") + labs(fill = "Impacto do crescimento económico")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 12 - Gráfico de barras empilhadas "Faixa etária" x "Impacto do crescimento económico no ambiente"
+</div>  
+
+Ao nível das faixas etárias, as pessoas com idades compreendidas entre os 65 e os 74 anos foram as que mais optaram por não responder à questão do impacto do crescimento económico no ambiente e, de uma forma generalizada, são os jovens com idades compreendidas entre os 15 e os 24 anos que menos importância dão ao impacto que o crescimento económico tem no ambiente. 
+
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Grau.de.instrução.do.inquirido, bd$cresc_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$instrucao <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "instrucao")
+
+ggplot(df_long, aes(x = instrucao, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Grau de instrução") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto do crescimento económico") + scale_y_continuous(limits = c(0, 200))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 13 - Gráfico de barras empilhadas "Grau de instrução" x "Impacto do crescimento económico no ambiente"
+</div>  
+
+A partir da imagem acima conclui-se que os inquiridos que menos optaram por responder à questão acerca do impacto do crescimento económico no ambiente têm o ensino básico ou não têm diploma. Por outro lado, as classificações mais altas foram atribuídas por inquiridos com o ensino superior. 
+
+#### Impacto do aumento do consumo no ambiente
+
+<div style="text-align:center">
+```{r, echo = FALSE, warning=FALSE}
+
+bd$aumen_adj <- ifelse(bd$`Aumento do consumo` == 99, "Não respondeu", bd$`Aumento do consumo`)
+
+bd$aumen_adj <- fct_relevel(bd$aumen_adj, "Não respondeu")
+
+ggplot(bd, aes(x = aumen_adj)) +
+  geom_bar(fill = "darkblue", color = "white") +
+  labs(x = "Importância para o ambiente", y = "Frequência de resposta") +
+  scale_y_continuous(limits = c(0, 200), breaks = seq(0, 200, by = 50)) +
+  coord_flip()
+
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 14 - Gráfico de barras horizontais do impacto do aumento do consumo no ambiente
+</div>  
+
+A classificação mais atribuída ao impacto que o aumento dos consumos tem no ambiente ronda os 3 e 4 valores, numa escala em que 1 representa nada importante e 4 muito importante.
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Sexo, bd$aumen_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$Sexo <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "Sexo")
+
+ggplot(df_long, aes(x = Sexo, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Sexo") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto do aumento do consumo") + scale_y_continuous(limits = c(0, 300))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 15 - Gráfico de barras empilhadas "Sexo" x "Impacto do aumento do consumo no ambiente"
+</div>  
+
+As respostas por sexo mostram que as mulheres atribuem classificações mais elevadas ao nível da importância que dão ao impacto do aumento dos consumos no ambiente.
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bins_idade, bd$aumen_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$bins_idade <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "bins_idade")
+
+ggplot(df_long, aes(x = bins_idade, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Faixa etária") + ylab("Frequência de resposta") + labs(fill = "Impacto do aumento do consumo")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 16 - Gráfico de barras empilhadas "Faixa etária" x "Impacto do aumento do consumo no ambiente"
+</div>  
+
+Tal como verificado na questão anterior, as pessoas com idades compreendidas entre os 65 e os 74 anos foram as que mais optaram por não responder à questão do impacto do aumento do consumo no ambiente e, em termos genéricos, as pessoas com idades compreendidas entre os 15 e os 24 anos e entre os 35 e os 44 anos são as que mais importância dão ao impacto que o aumento dos consumo revela ter no ambiente. 
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Grau.de.instrução.do.inquirido, bd$aumen_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$instrucao <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "instrucao")
+
+ggplot(df_long, aes(x = instrucao, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Grau de instrução") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto do aumento do consumo") + scale_y_continuous(limits = c(0, 200))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 17 - Gráfico de barras empilhadas "Grau de instrução" x "Impacto do aumento do consumo no ambiente"
+</div>  
+
+A imagem acima mostra que os inquiridos com o ensino secundário são os que atribuem classificações de importância mais altas e, ao mesmo tempo, mais baixas ao impacto do aumento do consumo no ambiente. 
+
+
+#### Impacto da industrialização da agricultura no ambiente
+
+<div style="text-align:center">
+```{r, echo = FALSE, warning=FALSE}
+
+bd$indag_adj <- ifelse(bd$`Industrialização da agricultura` == 99, "Não respondeu", bd$`Industrialização da agricultura`)
+
+bd$indag_adj <- fct_relevel(bd$indag_adj, "Não respondeu")
+
+ggplot(bd, aes(x = indag_adj)) +
+  geom_bar(fill = "darkblue", color = "white") +
+  labs(x = "Importância para o ambiente", y = "Frequência de resposta") +
+  scale_y_continuous(limits = c(0, 200), breaks = seq(0, 200, by = 50)) +
+  coord_flip()
+
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 18 - Gráfico de barras horizontais do impacto da industrialização da agricultura no ambiente
+</div>  
+
+As classificações de importância acerca do impacto da industrialização da agricultura no ambiente apresentam-se muito dividas entre os valores 2, 3 e 4, numa escala em que 1 representa nada importante e 4 representa muito importante. De qualquer forma, a classificação 3 volta a ser mais mencionada entre todos os inquiridos. 
+
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Sexo, bd$indag_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$Sexo <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "Sexo")
+
+ggplot(df_long, aes(x = Sexo, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Sexo") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto da industrialização da agricultura") + scale_y_continuous(limits = c(0, 300))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 19 - Gráfico de barras empilhadas "Sexo" x "Impacto da industrialização da agricultura no ambiente"
+</div>  
+
+As respostas sobre o impacto da industrialização da agricultura no ambiente apresentam uma consistência muito grande ao nível do sexo. A destacar apenas que as mulheres optaram mais vezes por não responder do que os homens. 
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bins_idade, bd$indag_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$bins_idade <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "bins_idade")
+
+ggplot(df_long, aes(x = bins_idade, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Faixa etária") + ylab("Frequência de resposta") + labs(fill = "Impacto da industrialização da agricultura")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 20 - Gráfico de barras empilhadas "Faixa etária" x "Impacto da industrialização da agricultura no ambiente"
+</div>  
+
+No que diz respeito às faixas etárias, as respostas sobre o impacto da industrialização da agricultura no ambiente são consistentes entre todos grupos. Contudo, importa destacar o elevado número de atribuições da classificação 3 por pessoas com idades compreendidas entre os 15 e os 24 anos. À semelhança das categorias de resposta anteriores, a faixa etária dos 65 aos 74 continua a ser a que optou mais vezes por não responder. 
+
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Grau.de.instrução.do.inquirido, bd$indag_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$instrucao <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "instrucao")
+
+ggplot(df_long, aes(x = instrucao, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Grau de instrução") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto da industrialização da agricultura") + scale_y_continuous(limits = c(0, 200))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 21 - Gráfico de barras empilhadas "Grau de instrução" x "Impacto da industrialização da agricultura no ambiente"
+</div>  
+
+As classificações de importância mais altas foram atribuídas por inquiridos que têm o ensino básico ou o ensino secundário. 
+
+#### Impacto da concentração urbana no ambiente
+
+<div style="text-align:center">
+```{r, echo = FALSE, warning=FALSE}
+
+bd$conurb_adj <- ifelse(bd$`Concentração urbana` == 99, "Não respondeu", bd$`Concentração urbana`)
+
+bd$conurb_adj <- fct_relevel(bd$conurb_adj, "Não respondeu")
+
+ggplot(bd, aes(x = conurb_adj)) +
+  geom_bar(fill = "darkblue", color = "white") +
+  labs(x = "Importância para o ambiente", y = "Frequência de resposta") +
+  scale_y_continuous(limits = c(0, 200), breaks = seq(0, 200, by = 50)) +
+  coord_flip()
+
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 22 - Gráfico de barras horizontais do impacto da concentração urbana no ambiente
+</div>  
+
+A par com o impacto da produção industrial, a concentração urbana também se mostra como um dos temas que gera maior preocupação entre os habitantes da grande Lisboa para o ambiente. 
+
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Sexo, bd$conurb_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$Sexo <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "Sexo")
+
+ggplot(df_long, aes(x = Sexo, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Sexo") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto da concentração urbana") + scale_y_continuous(limits = c(0, 300))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 23 - Gráfico de barras empilhadas "Sexo" x "Impacto da concentração urbana no ambiente"
+</div>  
+
+As respostas sobre o impacto da concentração urbana no ambiente também apresentam uma elevada consistência entre os sexos masculino e feminino. 
+
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bins_idade, bd$conurb_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$bins_idade <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "bins_idade")
+
+ggplot(df_long, aes(x = bins_idade, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Faixa etária") + ylab("Frequência de resposta") + labs(fill = "Impacto da concentração urbana")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 24 - Gráfico de barras empilhadas "Faixa etária" x "Impacto da concentração urbana no ambiente"
+</div>  
+
+No que diz respeito às faixas etárias, o impacto da concentração urbana no ambiente é visto com um maior grau de importância entre jovens com idades compreendidas entre os 15 e os 24 anos. 
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+cont_tab <- table(bd$Grau.de.instrução.do.inquirido, bd$conurb_adj)
+
+df <- as.data.frame.matrix(cont_tab)
+df$instrucao <- rownames(df)
+
+df_long <- reshape2::melt(df, id.vars = "instrucao")
+
+ggplot(df_long, aes(x = instrucao, y = value, fill = variable)) +
+  geom_bar(stat = "identity") + xlab("Grau de instrução") + ylab("Frequência de resposta") + 
+  labs(fill = "Impacto da concentração urbana") + scale_y_continuous(limits = c(0, 200))
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 25 - Gráfico de barras empilhadas "Grau de instrução" x "Impacto da concentração urbana no ambiente"
+</div>  
+
+As classificações de importância mais altas foram atribuídas por inquiridos que têm o ensino secundário. 
+
+#### Dependência das resoluções ambientais
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+bd$Dependência.das.resoluções.ambientais <- ifelse(bd$Dependência.das.resoluções.ambientais == 99, "Não respondeu", bd$Dependência.das.resoluções.ambientais)
+df_tab <- data.frame(bd$Dependência.das.resoluções.ambientais)
+ggplot(df_tab, aes(x="", fill=bd$Dependência.das.resoluções.ambientais)) +
+  geom_bar(width=1, position="fill") +
+  coord_polar("y", start=0) +
+  theme_void() +
+  labs(fill="Categoria")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 26 - Gráfico circular da dependência das resoluções ambientais
+</div>  
+
+Conforme mostra a imagem acima, mais de 50% dos inquiridos indicam que as resoluções ambientais dependem de uma mudança comportamental dos indíviduos. 
+
+#### Temas mais procurados em jornais e revistas
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+bd$Temas.procurados.em.jornais.e.revistas <- ifelse(bd$Temas.procurados.em.jornais.e.revistas == 99, "Não respondeu", bd$Temas.procurados.em.jornais.e.revistas)
+df_tab <- data.frame(bd$Temas.procurados.em.jornais.e.revistas)
+ggplot(df_tab, aes(x="", fill=bd$Temas.procurados.em.jornais.e.revistas)) +
+  geom_bar(width=1, position="fill") +
+  coord_polar("y", start=0) +
+  theme_void() +
+  labs(fill="Categoria")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 27 - Gráfico circular dos temas mais procurados em jornais e revistas
+</div>  
+
+No que diz respeito aos temas mais procurados em jornais e revistas, o ambiente continua a ver o volume da sua quota de conteúdo muito semelhante e repartido com temas como a cultura e temas genéricos, e vê-se ultrapassado pela política nacional.  
+
+#### Medidas do governo
+
+<div style="text-align:center">
+```{r, echo=FALSE}
+
+bd$Medidas.governo <- ifelse(bd$Medidas.governo == 99, "Não respondeu", bd$Medidas.governo)
+df_tab <- data.frame(bd$Medidas.governo)
+ggplot(df_tab, aes(x="", fill=bd$Medidas.governo)) +
+  geom_bar(width=1, position="fill") +
+  coord_polar("y", start=0) +
+  theme_void() +
+  labs(fill="Categoria")
+
+```
+</div>
+
+<div style="text-align:center">
+###### Figura 28 - Gráfico circular das medidas do governo
+</div>  
+
+No que diz respeito às principais medidas que devem ser tomadas pelo governo, os inquiridos deram particular atenção ao combate da poluição de rios e ribeiras e a cuidar de áreas protegias, nomeadamente reservas e parques naturais.   
+  
+  
+  
+Trabalho realizado por:   
+- António Teotónio  
+- João Dias  
+- Diogo Aqueu  
+- David Franco  
+
+### Webgrafia
+
+[1] https://expresso.pt/sociedade/2021-12-16-Censos-2021-25-das-casas-tem-uma-so-pessoa-la-dentro--e-e-na-regiao-de-Lisboa-que-mais-se-vive-sozinho--5572553b - Consultado a 25/03/2023
+
+
+
+
