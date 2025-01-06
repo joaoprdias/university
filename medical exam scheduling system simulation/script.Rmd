@@ -1,0 +1,765 @@
+---
+title: "script_final_me"
+author: "João Dias (nº 110305) / Felipe Pereira (nº 110861) /
+David Franco (nº 110733) / João Batista (nº 111611) /
+António Teotónio (nº 111283)"
+date: "2024-11-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Carregar bibliotecas necessárias
+library(simmer)
+library(simmer.plot)
+library(tidyverse)
+library(ggplot2)
+```
+
+**Funções**
+
+```{r}
+# Função para converter horas em minutos
+hours_to_minutes <- function(hours) {
+  return(hours * 60)
+}
+
+# Função para executar múltiplas replicações
+run_replications <- function(scenario_func, n_reps) {
+  set.seed(42)  # Para reprodutibilidade
+  replications <- lapply(1:n_reps, function(i) {
+    scenario_func()
+  })
+  return(replications)
+}
+
+# Função para analisar os diversos cenários
+analyze_scenario <- function(results, scenario_name) {
+  # Obter métricas dos recursos e das chegadas
+  resources <- get_mon_resources(results)
+  arrivals <- get_mon_arrivals(results)
+  
+  # Plotar utilização dos recursos
+  p1 <- plot(resources, metric = "utilization") +
+    ggtitle(paste("Utilização dos Recursos -", scenario_name))
+  
+  # Plotar tempo total no sistema
+  p2 <- plot(arrivals, metric = "flow_time") +
+    ggtitle(paste("Tempo Total no Sistema -", scenario_name))
+  
+  p3 <- plot(resources, metric = "usage", item = "server") +
+    ggtitle(paste("Usage dos Recursos -", scenario_name))
+  
+  # Evolução dos clientes em fila de espera para atendimentos presenciais e por telefone
+  queue_distribution <- arrivals %>%
+    mutate(type = ifelse(grepl("presential", name), "Presencial", "Telefone")) %>%
+    group_by(type, time_int = floor(start_time / 30) * 30) %>%  # Agrupar em intervalos de 30
+    summarise(total_queue = sum(end_time - start_time - activity_time > 0), .groups = "drop") # condição para garantir que temos os que estão fila de espera
+  # Criar rótulos para os intervalos
+  queue_distribution <- queue_distribution %>%
+    mutate(time_label = paste0(time_int, "-", time_int + 30))  
+  # Garantir que os intervalos sejam tratados como fator para manter a ordem correta
+  queue_distribution$time_label <- factor(queue_distribution$time_label, levels = unique(queue_distribution$time_label))
+  # Gráfico da distribuição da fila de espera
+  p4 <- ggplot(queue_distribution, aes(x = time_label, y = total_queue, fill = type)) +
+    geom_bar(stat = "identity", position = "dodge") +  # Usar geom_bar para criar um histograma
+    labs(title = "Distribuição de Clientes em Fila de Espera",
+         x = "Intervalo de Tempo (minutos)",
+         y = "Número de Clientes em Fila") +
+    theme_minimal() +
+    scale_fill_manual(values = c("Presencial" = "blue", "Telefone" = "orange"))
+    
+  # Calcular métricas gerais do processo
+  avg_metrics <- arrivals %>%
+    group_by(replication) %>%
+    summarise(
+      avg_activity_time = mean(activity_time),
+      avg_wait_time = mean(end_time - start_time - activity_time),
+      avg_total_time = mean(end_time - start_time)
+    ) %>%
+    summarise(
+      avg_activity = mean(avg_activity_time),
+      avg_waiting = mean(avg_wait_time),
+      avg_total = mean(avg_total_time)
+    )
+  
+  # Calcular ocupação média dos recursos e comprimento médio da fila
+  avg_resource_metrics <- resources %>%
+    group_by(replication) %>%
+    summarise(
+      avg_utilization = mean(server / capacity, na.rm = TRUE),
+      avg_queue_length = mean(queue, na.rm = TRUE)
+    ) %>%
+    summarise(
+      avg_resource_utilization = mean(avg_utilization),
+      avg_queue_length = mean(avg_queue_length)
+    )
+  
+  # Calcular tempo médio de espera e número médio de chamadas para o gerador "phone"
+  phone_metrics <- arrivals %>%
+    filter(grepl("phone", name)) %>%  # Filtra para incluir todas as chamadas
+    group_by(replication) %>%  # Agrupa por replicação
+    summarise(
+      avg_waiting_time_phone_p = mean(end_time - start_time - activity_time, na.rm = TRUE),  # Calcula o tempo médio de espera
+      sum_calls = n(),  # Número total de chamadas
+      waiting_calls = sum(end_time - start_time - activity_time > 0, na.rm = TRUE)  # Contar chamadas em espera
+    ) %>%
+    summarise(
+      avg_waiting_time_phone = mean(avg_waiting_time_phone_p, na.rm = TRUE),
+      avg_total_calls = mean(sum_calls, na.rm = TRUE),
+      avg_waiting_calls = mean(waiting_calls, na.rm = TRUE)  # Média de chamadas em espera
+    )
+  
+  # Combinar todas as métricas
+  metrics <- list(
+    process_metrics = avg_metrics,
+    resource_metrics = avg_resource_metrics,
+    phone_metrics = phone_metrics
+  )
+  
+  return(list(plots = list(p1, p2, p3, p4), metrics = metrics, resources = resources, arrivals = arrivals))
+}
+```
+
+**Configs**
+
+```{r}
+# Configuração do tempo de simulação (4 horas = 240 minutos)
+SIM_TIME <- hours_to_minutes(4)
+N_REPS <- 100
+set.seed(123)
+
+# Configuração das distribuições de tempo
+# Chegadas
+arrival_presential <- function() rexp(1, 1/15)  # média de 15 minutos
+arrival_phone <- function() rexp(1, 1/5)        # média de 5 minutos
+
+# Atendimentos
+service_presential <- function() rlnorm(1, meanlog=log(1.5), sdlog=log(3.5))
+service_phone <- function() rlnorm(1, meanlog=4*log(1.5), sdlog=log(3.5))
+```
+
+**Cenário 1: Base**
+
+```{r}
+###################
+# Cenário 1: Base #
+###################
+
+simulate_scenario1 <- function() {
+  # Criar ambiente de simulação
+  env <- simmer("Centro de Exames")
+  
+  # Trajetória para clientes presenciais
+  presential_path <- trajectory("Presential") %>%
+    log_("Cliente presencial chegou") %>%
+    seize("guichet", 1) %>%
+    timeout(service_presential) %>%
+    release("guichet", 1) %>%
+    log_("Cliente presencial saiu")
+  
+  # Trajetória para chamadas
+  phone_path <- trajectory("Phone") %>%
+    log_("Chamada recebida") %>%
+    seize("guichet", 1) %>%
+    timeout(service_phone) %>%
+    release("guichet", 1) %>%
+    log_("Chamada finalizada")
+  
+  # Configurar ambiente
+  env %>%
+    add_resource("guichet", 2) %>%
+    add_generator("presential", presential_path, arrival_presential) %>%
+    add_generator("phone", phone_path, arrival_phone) %>%
+    run(until = SIM_TIME)
+  
+  return(env)
+}
+
+# Executar simulação do Cenário 1
+results_scenario1 <- run_replications(simulate_scenario1, N_REPS)
+```
+
+```{r}
+# Analisar resultados através da aplicação da função de análise ao Cenário 1
+analysis1 <- analyze_scenario(results_scenario1, "Cenário Base")
+
+# Analisar as métricas totais de tempo médio de serviço (avg_activity), tempo médio de espera (avg_waiting) e tempo médio total para a marcação dos exames médicos (avg_total). As médias são das 100 simulações. 
+print(analysis1$metrics[[1]])
+
+```
+
+Nesta tabela podemos observar que o tempo médio de atendimento (activity_time) é 8,25 minutos, o tempo de espera (dado por end_time - start_time - activity_time) ronda os 22,85 minutos e a média do tempo total (dado por end_time - start_time) passa pelos 31,10 minutos.
+
+
+```{r}
+# Analisar as métricas totais de ocupação média dos recursos (avg_resource_utilization) que é dada pela utilização no server / capacity e analisar as métricas relacionadas com o número de pessoas, em média, na fila de espera (avg_queue_length) entre todas as simulações
+print(analysis1$metrics[[2]])
+
+```
+
+A análise das métricas mostra que a ocupação média dos recursos é de 91,28%, indicando que o sistema está quase no limite da sua capacidade, o que pode causar problemas se a procura aumentar. Além disso, a fila de espera média é de cerca de 7 pessoas, sugerindo que há um tempo de espera considerável.
+
+```{r}
+# Analisar as métricas do tempo médio de espera ao telefone (avg_waiting_time_phone), média do total de chamadas (avg_total_calls) e média das chamadas em espera (avg_waiting_calls) 
+print(analysis1$metrics[[3]])
+
+```
+
+A análise das métricas de atendimento telefónico indica que o tempo médio de espera ao telefone é de 22,31 minutos, o que representa um tempo de espera elevado e pode afetar a satisfação dos clientes. Em média, o sistema recebe 35,26 chamadas, das quais cerca de 29,67 ficam em espera, sugerindo uma sobrecarga.
+
+```{r}
+# Plot 1 da utiização dos recursos
+analysis1$plots[[1]]
+
+```
+
+O gráfico mostra a "Utilização dos Recursos" em um cenário base, onde se avalia a percentagem de utilização de um recurso identificado como "guichet." A barra cinzenta indica que o recurso está a ser utilizado a uma taxa próxima de 90%, conforme já mencionado acima. 
+
+Este nível de utilização sugere que o recurso "guichet" pode estar sobrecarregado, fazendo com que o tempo de espera seja elevado, o que pode afetar a satisfação dos clientes, sugerindo que o sistema enfrenta uma alta procura e potencial falta de capacidade de resposta.
+
+```{r}
+# Plot 2 do fluxo de chegadas
+analysis1$plots[[2]]
+
+```
+
+No gráfico, intitulado "Tempo Total no Sistema – Cenário Base" observa-se a evolução do tempo total que os clientes passam no sistema ao longo do tempo de simulação. A linha azul representa uma tendência de crescimento, indicando que o tempo médio que os clientes permanecem no sistema aumenta ao longo da simulação. Esta tendência pode sugerir um aumento na carga do sistema, levando a maiores tempos de espera.
+
+```{r}
+# Plot 3 de usage dos recursos
+analysis1$plots[[3]]
+
+```
+
+No gráfico, intitulado "Uso dos Recursos – Cenário Base", é representado o uso dos recursos (neste caso, o guichet) ao longo do tempo. Observa-se que o uso do recurso se aproxima da sua capacidade máxima (em torno de 2), o que indica uma utilização elevada e consistente do guiché. Isto reforça a ideia de que o sistema pode estar próximo do seu limite de capacidade, o que pode contribuir para tempos de espera maiores e filas mais longas ao longo do tempo.
+
+```{r}
+# Plot 4 da distribuição dos clientes em fila de espera (presencial e por telefone)
+analysis1$plots[[4]]
+
+```
+
+Neste gráfico, intitulado "Distribuição de Clientes em Fila de Espera", é apresentada a quantidade de clientes em fila de espera, separada por tipo de atendimento (presencial e por telefone) e por intervalos de tempo.
+
+A cor laranja representa as chamadas telefónicas, enquanto a cor azul representa os atendimentos presenciais. Observa-se que o número de clientes em fila é maior para as chamadas telefónicas, especialmente entre os intervalos de 30 a 150 minutos. Isso sugere que o sistema enfrenta uma carga mais elevada para o atendimento telefónico, resultando em filas mais longas em comparação com o atendimento presencial.
+
+Este padrão reforça a necessidade de ajustes na capacidade ou nas estratégias de atendimento telefónico para reduzir o tempo de espera e equilibrar a carga entre os tipos de atendimento.
+
+**Cenário 2: Prioridade**
+
+```{r}
+########################
+# Cenário 2: Prioridade#
+########################
+
+simulate_scenario2 <- function() {
+  env <- simmer("Centro de Exames")
+  
+  presential_path <- trajectory("Presential") %>%
+    log_("Cliente presencial chegou") %>%
+    seize("guichet", 1) %>%
+    timeout(service_presential) %>%
+    release("guichet", 1) %>%
+    log_("Cliente presencial saiu")
+  
+  phone_path <- trajectory("Phone") %>%
+    log_("Chamada recebida") %>%
+    seize("guichet", 1) %>%  
+    timeout(service_phone) %>%
+    release("guichet", 1) %>%
+    log_("Chamada finalizada")
+  
+  env %>%
+    add_resource("guichet", 2) %>%
+    add_generator("presential", presential_path, arrival_presential) %>%
+    add_generator("phone", phone_path, arrival_phone, priority=1) %>%
+    run(until = SIM_TIME)
+  
+  return(env)
+}
+
+# Executar simulação do Cenário 2
+results_scenario2 <- run_replications(simulate_scenario2, N_REPS)
+
+```
+
+```{r}
+# Analisar resultados através da aplicação da função de análise ao Cenário 2
+analysis2 <- analyze_scenario(results_scenario2, "Cenário Prioridade")
+
+# Analisar as métricas totais de tempo médio de serviço (avg_activity), tempo médio de espera (avg_waiting) e tempo médio total para a marcação dos exames médicos (avg_total). As médias são das 100 simulações. 
+print(analysis2$metrics[[1]])
+
+```
+
+No Cenário 2 (Cenário Prioridade), o tempo médio de serviço é de 8,99 minutos, o tempo médio de espera é de 19,24 minutos, e o tempo total médio para marcação é de 28,22 minutos. Apesar da prioridade, o tempo de espera ainda é elevado, sugerindo a necessidade de otimizar a capacidade e recursos para maior eficiência.
+
+
+```{r}
+# Analisar as métricas totais de ocupação média dos recursos (avg_resource_utilization) que é dada pela utilização no server / capacity e analisar as métricas relacionadas com o número de pessoas, em média, na fila de espera (avg_queue_length) entre todas as simulações
+print(analysis2$metrics[[2]])
+
+```
+
+No Cenário 2, a análise das métricas de ocupação dos recursos e da fila de espera indica que, em média, os recursos foram utilizados a 91,45% da sua capacidade. Além disso, o número médio de pessoas na fila de espera foi de aproximadamente 7,98, considerando todas as simulações realizadas.
+
+
+```{r}
+# Analisar as métricas do tempo médio de espera ao telefone (avg_waiting_time_phone), média do total de chamadas (avg_total_calls) e média das chamadas em espera (avg_waiting_calls) 
+print(analysis2$metrics[[3]])
+
+```
+
+No Cenário 2, as métricas de atendimento telefónico mostram que o tempo médio de espera ao telefone é de aproximadamente 18,98 minutos. A média do total de chamadas recebidas é de 36,82, enquanto a média de chamadas em espera é de 31,44. Estes valores indicam um elevado tempo de espera e um número significativo de chamadas em fila.
+
+```{r}
+# Plot 1 da utiização dos recursos
+analysis2$plots[[1]]
+
+```
+
+No gráfico, intitulado "Utilização dos Recursos - Cenário Prioridade", é apresentada a percentagem de utilização de um recurso específico identificado como "guichet". A barra cinzenta indica uma taxa de utilização próxima dos 90%. Este nível de utilização elevado sugere que o recurso está quase no limite de sua capacidade, o que pode contribuir para tempos de espera mais longos e potenciais sobrecargas no sistema, conforme o que já se verificava no cenário 1 também. 
+
+```{r}
+# Plot 2 do fluxo de chegadas
+analysis2$plots[[2]]
+
+```
+
+No gráfico, intitulado "Tempo Total no Sistema - Cenário Prioridade", observa-se a evolução do tempo total que os indivíduos passam no sistema ao longo das simulações. A linha azul representa uma tendência média do tempo total, que parece aumentar à medida que o tempo de simulação avança, sugerindo um possível aumento de carga no sistema. As várias linhas finas representam as diferentes simulações, com uma dispersão significativa ao longo do tempo, o que indica variabilidade nos tempos individuais.
+
+```{r}
+# Plot 3 de usage dos recursos
+analysis2$plots[[3]]
+
+```
+
+O segundo gráfico ilustra a utilização dos recursos num cenário de prioridade, apresentando uma evolução temporal do uso do servidor. É possível observar um crescimento acentuado inicial na utilização dos recursos, que posteriormente estabiliza entre os níveis 1.5 e 2.0 (querendo dizer que o uso do recurso se aproxima da sua capacidade máxima). A presença de múltiplas linhas sobrepostas em tom vermelho sugere várias iterações ou simulações do mesmo cenário, proporcionando uma visão robusta do comportamento do sistema ao longo do tempo.
+
+```{r}
+# Plot 4 da distribuição dos clientes em fila de espera (presencial e por telefone)
+analysis2$plots[[4]]
+
+```
+
+O gráfico demonstra a distribuição dos clientes em fila de espera, onde é notório que o atendimento por telefone apresenta uma afluência significativamente superior ao presencial. Observa-se um pico de utentes em espera no intervalo entre os 30 e 60 minutos, seguido de uma diminuição gradual nos intervalos posteriores. O atendimento presencial mantém-se consistentemente mais reduzido em todos os intervalos temporais, o que sugere uma maior eficiência/capacidade de gestão ou menor procura deste tipo de serviço.
+
+**Cenário 3: Preemptivo**
+
+```{r}
+############################
+# Cenário 3: Preemptivo    #
+############################
+
+simulate_scenario3 <- function() {
+  env <- simmer("Centro de Exames")
+  
+  presential_path <- trajectory("Presential") %>%
+    log_("Cliente presencial chegou") %>%
+    seize("guichet", 1) %>%
+    timeout(service_presential) %>%
+    release("guichet", 1) %>%
+    log_("Cliente presencial saiu")
+  
+  phone_path <- trajectory("Phone") %>%
+    log_("Chamada recebida") %>%
+    seize("guichet", 1) %>% 
+    timeout(service_phone) %>%
+    release("guichet", 1) %>%
+    log_("Chamada finalizada")
+  
+  env %>%
+    add_resource("guichet", 2, preemptive=TRUE) %>%
+    add_generator("presential", presential_path, arrival_presential) %>%
+    add_generator("phone", phone_path, arrival_phone, priority=1) %>%
+    run(until = SIM_TIME)
+  
+  return(env)
+}
+
+# Executar simulação do Cenário 3
+results_scenario3 <- run_replications(simulate_scenario3, N_REPS)
+
+```
+
+```{r}
+# Analisar resultados através da aplicação da função de análise ao Cenário 3
+analysis3 <- analyze_scenario(results_scenario3, "Cenário Preemptivo")
+
+# Analisar as métricas totais de tempo médio de serviço (avg_activity), tempo médio de espera (avg_waiting) e tempo médio total para a marcação dos exames médicos (avg_total). As médias são das 100 simulações. 
+print(analysis3$metrics[[1]])
+
+```
+
+Nesta tabela do cenário 3 é visível a presença de um tempo médio de atendimento de 8,95 minutos, tempo médio de espera de 19,50 minutos e por fim o tempo da media total foi de 28,45 minutos.
+
+
+```{r}
+# Analisar as métricas totais de ocupação média dos recursos (avg_resource_utilization) que é dada pela utilização no server / capacity e analisar as métricas relacionadas com o número de pessoas, em média, na fila de espera (avg_queue_length) entre todas as simulações
+print(analysis3$metrics[[2]])
+
+```
+
+Nesta segunda tabela do cenário 3, a ocupação média dos recursos foi de 91,95%, o que indica que os guichets estavam ocupados a maior parte do tempo. Isto sugere uma utilização próxima da capacidade máxima. Além disso, o tamanho médio da fila de espera foi de 8,34 pessoas. 
+
+```{r}
+# Analisar as métricas do tempo médio de espera ao telefone (avg_waiting_time_phone), média do total de chamadas (avg_total_calls) e média das chamadas em espera (avg_waiting_calls) 
+print(analysis3$metrics[[3]])
+
+```
+
+Nesta tabela, o tempo médio de espera ao telefone foi de 18,48 minutos. Em média, ocorreram 37,41 chamadas e 30,68 chamadas ficaram em espera, indicando uma alta quantidade de chamadas e um tempo considerável de espera.
+
+```{r}
+# Plot 1 da utiização dos recursos
+analysis3$plots[[1]]
+
+```
+
+A partir deste gráfico "Utilização dos Recursos - Cenário Preemptivo", observa-se que a ocupação dos guichets foi muito alta, podendo assim dizer que os recursos estão constantemente cheios, o que contribui para tempos de espera longos.
+
+
+```{r}
+# Plot 2 do fluxo de chegadas
+analysis3$plots[[2]]
+
+```
+
+Neste gráfico sobre o Tempo Total no Sistema no Cenário Preemptivo, a linha azul, que representa o tempo médio que os clientes permanecem no sistema, mostra um crescimento linear moderado ao longo do período de trabalho considerado. 
+
+
+```{r}
+# Plot 3 de usage dos recursos
+analysis3$plots[[3]]
+
+```
+
+Com base no gráfico sobre o Uso dos Recursos no Cenário Preemptivo, observa-se, com base na analise das linhas vermelhas, que a ocupação atinge rapidamente o limite máximo de 2 guichets, indicando que ambos estão quase sempre em utilização durante a simulação, o que indica que, embora o sistema priorize chamadas telefónicas, a ocupação total dos recursos permanece elevada, o que contribui para um ambiente de atendimento continuamente sobrecarregado.
+
+```{r}
+# Plot 4 da distribuição dos clientes em fila de espera (presencial e por telefone)
+analysis3$plots[[4]]
+
+```
+
+Ao analisar o gráfico de "Distribuição de Clientes em Fila de Espera" do cenário preemptivo, observa-se que o atendimento telefónico apresenta um número consideravelmente maior de clientes em fila, especialmente nos intervalos entre 30 a 150 minutos. Esta tendência é semelhante ao padrão identificado no cenário anterior, sugerindo que, mesmo com a implementação do sistema preemptivo, o desequilíbrio na carga entre os canais de atendimento presencial e telefónico ainda persiste, o que indica que, apesar da prioridade dada às chamadas telefónicas, as estratégias adotadas não foram suficientes para eliminar completamente a discrepância de valores observada.
+
+
+**Cenário 4: Abandono 10 min**
+
+```{r}
+################################
+# Cenário 4: Abandono 10 min   #
+################################
+
+simulate_scenario4 <- function() {
+  env <- simmer("Centro de Exames")
+  
+  presential_path <- trajectory("Presential") %>%
+    log_("Cliente presencial chegou") %>%
+    seize("guichet", 1) %>%
+    timeout(service_presential) %>%
+    release("guichet", 1) %>%
+    log_("Cliente presencial saiu")
+  
+  phone_path <- trajectory("Phone") %>%
+    log_("Chamada recebida") %>%
+    renege_in(10, out = trajectory() %>% 
+                log_("Chamada abandonada após 10 minutos")) %>%
+    seize("guichet", 1) %>%
+    renege_abort() %>%
+    timeout(service_phone) %>%
+    release("guichet", 1) %>%
+    log_("Chamada finalizada")
+  
+  env %>%
+    add_resource("guichet", 2) %>%
+    add_generator("presential", presential_path, arrival_presential) %>%
+    add_generator("phone", phone_path, arrival_phone, priority=1) %>%
+    run(until = SIM_TIME)
+  
+  return(env)
+}
+
+# Executar simulação do Cenário 4
+results_scenario4 <- run_replications(simulate_scenario4, N_REPS)
+
+```
+
+```{r}
+# Analisar resultados através da aplicação da função de análise ao Cenário 4
+analysis4 <- analyze_scenario(results_scenario4, "Cenário Abandono")
+
+# Analisar as métricas totais de tempo médio de serviço (avg_activity), tempo médio de espera (avg_waiting) e tempo médio total para a marcação dos exames médicos (avg_total). As médias são das 100 simulações. 
+print(analysis4$metrics[[1]])
+
+```
+
+Na tabela referente ao cenário 4, o tempo médio de atendimento foi de 6,08 minutos, o tempo médio de espera foi de 7,86 minutos e, por fim, o tempo médio total foi de 13,94 minutos. Valores estes que indicam uma simulação mais eficaz, com menor tempo de espera e atendimento.
+
+
+```{r}
+# Analisar as métricas totais de ocupação média dos recursos (avg_resource_utilization) que é dada pela utilização no server / capacity e analisar as métricas relacionadas com o número de pessoas, em média, na fila de espera (avg_queue_length) entre todas as simulações
+print(analysis4$metrics[[2]])
+
+```
+
+Na segunda tabela do cenário 4, a ocupação média dos recursos foi de 88,29%, o que indica que os guichets estavam ocupados na maior parte do tempo, com uma utilização eficiente dos recursos disponíveis. Além disso, o tamanho médio da fila de espera foi de 2,67 pessoas, o que sugere que, embora a fila tenha sido relativamente pequena, ainda tenha havido uma espera antes do atendimento. Estes valores revelam uma boa utilização dos recursos.
+
+```{r}
+# Analisar as métricas do tempo médio de espera ao telefone (avg_waiting_time_phone), média do total de chamadas (avg_total_calls) e média das chamadas em espera (avg_waiting_calls) 
+print(analysis4$metrics[[3]])
+
+```
+
+Analisando a seguinte tabela do cenário 4, podemos verificar que o tempo médio de espera ao telefone foi de 4,72 minutos, o que indica uma espera relativamente curta para as chamadas comparando com outras simulações. Em média, ocorreram 45,49 chamadas, e 38,39 chamadas ficaram em espera, o que sugere um volume elevado de chamadas, com uma quantidade significativa de chamadas a aguardar atendimento.
+
+```{r}
+# Plot 1 da utiização dos recursos
+analysis4$plots[[1]]
+
+```
+
+A partir deste gráfico "Utilização dos Recursos - Cenário Abandono", observa-se que a ocupação dos atendentes continua elevada, com uma média próxima da capacidade total.
+
+```{r}
+# Plot 2 do fluxo de chegadas
+analysis4$plots[[2]]
+
+```
+
+A partir do segundo gráfico apresentado, observa-se que o tempo médio que os clientes permanecem no sistema apresenta um pequeno crescimento ao longo da simulação. Comparado aos cenários anteriores, onde a linha azul mantinha um crescimento bem mais notório, a linha apresentada no gráfico acima indica que o tempo de espera médio é menor no cenário de abandono, e assim, com a regra de abandono de chamadas telefónicas após 10 minutos, o sistema não acumula tanto congestionamento, refletindo uma maior eficiência na gestão de filas.
+
+```{r}
+# Plot 3 de usage dos recursos
+analysis4$plots[[3]]
+
+```
+
+Com base no gráfico sobre o Uso dos Recursos no Cenário Abandono, observa-se que as linhas vermelhas indicam que a ocupação dos guichets rapidamente atingem o limite máximo de 2, e permanece nesse nível durante a maior parte da simulação, semelhante ao que ocorre no cenário preemptivo, por exemplo. Portanto, no cenário abandono, mesmo com algumas chamadas abandonadas após 10 minutos, a regra de abandono não reduz significativamente a ocupação dos guichets.
+
+```{r}
+# Plot 4 da distribuição dos clientes em fila de espera (presencial e por telefone)
+analysis4$plots[[4]]
+
+```
+
+No ultimo gráfico deste cenário, "Distribuição de Clientes em Fila de Espera" do cenário abandono, observa-se que, assim como no cenário anterior, o atendimento telefónico continua a apresentar um número elevado de clientes em fila. Isto é particularmente notório entre os intervalos de 30 a 210 minutos, com um número significativo de clientes que aguardam atendimento. Pode-se concluir assim que a regra implementada neste cenário, com o objetivo de aliviar a carga dos guichets e a espera dos clientes, não altera o sistema de enfrentar dificuldades para atender a alta procura dentro desse limite de tempo. 
+
+
+**Cenário 5: Separação de serviços**
+
+```{r}
+####################################
+# Cenário 5: Separação de serviços #
+####################################
+
+simulate_scenario5 <- function() {
+  env <- simmer("Centro de Exames")
+  
+  presential_path <- trajectory("Presential") %>%
+    log_("Cliente presencial chegou") %>%
+    seize("front_office", 1) %>%
+    timeout(service_presential) %>%
+    release("front_office", 1) %>%
+    log_("Cliente presencial saiu")
+  
+  phone_path <- trajectory("Phone") %>%
+    log_("Chamada recebida") %>%
+    renege_in(10, out = trajectory() %>% 
+                log_("Chamada abandonada após 10 minutos")) %>%
+    seize("back_office", 1) %>%
+    renege_abort() %>%
+    timeout(service_phone) %>%
+    release("back_office", 1) %>%
+    log_("Chamada finalizada")
+  
+  env %>%
+    add_resource("front_office", 2) %>%
+    add_resource("back_office", 1) %>%
+    add_generator("presential", presential_path, arrival_presential) %>%
+    add_generator("phone", phone_path, arrival_phone) %>%
+    run(until = SIM_TIME)
+  
+  return(env)
+}
+
+# Executar simulação do Cenário 5
+results_scenario5 <- run_replications(simulate_scenario5, N_REPS)
+
+```
+
+```{r}
+# Analisar resultados através da aplicação da função de análise ao Cenário 5
+analysis5 <- analyze_scenario(results_scenario5, "Cenário Separado")
+
+# Analisar as métricas totais de tempo médio de serviço (avg_activity), tempo médio de espera (avg_waiting) e tempo médio total para a marcação dos exames médicos (avg_total). As médias são das 100 simulações. 
+print(analysis5$metrics[[1]])
+
+```
+
+O tempo médio de serviço (avg_activity) foi de 3,87 minutos, representando o tempo médio que um cliente está a ser atendido. O tempo médio de espera (avg_waiting) foi de 5,45 minutos, mostrando quanto tempo, em média, os clientes aguardam na fila antes de serem atendidos. E por fim, o tempo médio total (avg_total) foi de 9,32 minutos, o que representa o tempo médio completo que um cliente permanece no sistema do centro de exames, incluindo o tempo de espera e o tempo de atendimento.
+
+```{r}
+# Analisar as métricas totais de ocupação média dos recursos (avg_resource_utilization) que é dada pela utilização no server / capacity e analisar as métricas relacionadas com o número de pessoas, em média, na fila de espera (avg_queue_length) entre todas as simulações
+print(analysis5$metrics[[2]])
+
+```
+
+A ocupação média dos recursos dado pela razão do server sobre a capacity foi, aproximadamente, 0,79, indicando uma utilização eficiente do sistema, próximo da capacidade máxima, mas sem gerar sobrecarga. Em média, havia cerca de 1,36 clientes simultaneamente na fila de espera durante o período de simulação, o que reflete o nível de congestionamento do sistema e permite prever a quantidade de clientes que aguardavam atendimento em um momento típico.
+
+```{r}
+# Analisar as métricas do tempo médio de espera ao telefone (avg_waiting_time_phone), média do total de chamadas (avg_total_calls) e média das chamadas em espera (avg_waiting_calls) 
+print(analysis5$metrics[[3]])
+
+```
+
+O tempo médio de espera para atendimento telefónico foi sensivelmente 7,33 minutos, indicando um período significativo de espera. Em média, houve um total de 44,78 chamadas ao longo da simulação, com cerca de 41,57 chamadas simultaneamente em espera, o que demonstra uma grande procura e utilização no serviço de atendimento telefónico.
+
+```{r}
+# Plot 1 da utiização dos recursos
+analysis5$plots[[1]]
+
+```
+
+A utilização do back office apresenta-se muito mais elevada. Isso ocorre devido à maior procura por chamadas telefónicas. Por outro lado, a utilização do front office é consideravelmente mais baixa. Isto deve-se ao facto de haver uma menor procura por atendimentos presenciais em comparação com as chamadas telefónicas, e também porque há 2 guichets disponíveis, o que permite que o atendimento presencial ocorra de forma mais eficiente.
+
+
+```{r}
+# Plot 2 do fluxo de chegadas
+analysis5$plots[[2]]
+
+```
+
+O gráfico do tempo total no sistema para o Cenário Separado mostra que, apesar de a maioria dos clientes serem atendidos rapidamente, há picos ocasionais (em certas simulações) de tempo total elevado. Esses picos indicam períodos de alta procura, nos quais o operador o back office fica sobrecarregado, resultando em longos tempos de espera. No entanto de uma forma geral, a linha azul (resultado de todas as simulações) acaba por estabilizar. 
+
+```{r}
+# Plot 3 de usage dos recursos
+analysis5$plots[[3]]
+
+```
+O gráfico de uso dos recursos mostra claramente a diferença de utilização entre os operadores de back office e front office. Observa-se que o back office está quase constantemente em uso, com uma ocupação média próxima de 100%, indicando uma elevada procura para atendimento das chamadas telefónicas. Por outro lado, o front office tem um uso bem mais variável e consideravelmente menor, mostrando períodos de baixa ocupação. Este padrão reforça a conclusão de que o back office está mais sobrecarregado, enquanto o front office poderia ter a sua capacidade ajustada ou redistribuída para melhorar o atendimento geral e reduzir a carga no setor de chamadas.
+
+```{r}
+# Plot 4 da distribuição dos clientes em fila de espera (presencial e por telefone)
+analysis5$plots[[4]]
+
+```
+
+O gráfico de distribuição de clientes em fila de espera, dividido entre clientes presenciais e clientes por telefone, indica uma diferença significativa na preferência por tipo de atendimento. Os clientes telefónicos, representados pela cor laranja, têm uma presença muito maior na fila ao longo de todo o período simulado. Em contraste, os clientes presenciais (em azul) representam uma fração bem menor da fila.
+Essa discrepância sugere uma alta procura pelo atendimento telefónico e evidencia a necessidade de ajustar os recursos alocados ao atendimento de chamadas, possivelmente reforçando o back office para atender às necessidades de procura e reduzir o tempo de espera dos clientes que utilizam o setor telefónico. É por este motivo que decidimos fazer um cenário adicional que se apresenta em seguida. 
+
+
+**Cenário 6: Back Office com Limite de Tempo de Chamadas**
+
+Para o sexto cenário, uma solução interessante para reduzir o congestionamento das chamadas telefónicas e otimizar os recursos disponíveis pode envolver as seguintes estratégias:
+
+-   Aumentar o número de operadores no Back Office: Dado que o uso dos guichets presenciais no cenário 5 mostrou-se baixo, enquanto o Back Office estava sobrecarregado, redistribuir recursos pode ser uma solução. Podemos destinar mais operadores exclusivamente para o atendimento telefónico durante o horário de pico (9h-13h), especialmente em intervalos onde a chegada de chamadas é mais frequente.
+
+-   Limitar a duração das chamadas: Para aumentar a eficiência e garantir que mais chamadas sejam atendidas, o tempo de atendimento telefónico poderia ter um limite máximo de X minutos. Passado este tempo, o operador encerra a chamada ou orienta o cliente a continuar via atendimento presencial, se necessário.
+
+-   Encaminhamento de Chamadas de Baixa Prioridade para um Sistema Automatizado: Algumas consultas simples podem ser respondidas por um sistema automatizado (por exemplo, um sistema de IVR para informações básicas), deixando apenas as chamadas que exigem um operador humano para o Back Office.
+
+```{r include=FALSE}
+# Configuração do tempo limite para chamadas (em minutos)
+CALL_DURATION_LIMIT <- 8  # por exemplo, 8 minutos
+
+# Novo cenário com aumento do back office e limitação de duração da chamada
+simulate_scenario6 <- function() {
+  # Criar ambiente de simulação
+  env <- simmer("Centro de Exames")
+  
+  # Trajetória para chamadas com duração limitada
+  phone_path_limited <- trajectory("Phone Limited") %>%
+    log_("Chamada recebida") %>%
+    seize("back_office", 1) %>%
+    timeout(min(service_phone(), CALL_DURATION_LIMIT)) %>%  # Limitar a duração
+    release("back_office", 1) %>%
+    log_("Chamada finalizada ou encerrada por tempo limite")
+  
+  # Trajetória para clientes presenciais 
+  presential_path <- trajectory("Presential") %>%
+    log_("Cliente presencial chegou") %>%
+    seize("guichet", 1) %>%
+    timeout(service_presential) %>%
+    release("guichet", 1) %>%
+    log_("Cliente presencial saiu")
+  
+  # Configurar ambiente
+  env %>%
+    add_resource("guichet", 2) %>%  # Guichet para atendimento presencial
+    add_resource("back_office", 3) %>%  # Aumentar o número de operadores no back office
+    add_generator("presential", presential_path, arrival_presential) %>%
+    add_generator("phone", phone_path_limited, arrival_phone) %>%
+    run(until = SIM_TIME)
+  
+  return(env)
+}
+
+# Executar simulação do Cenário 6
+results_scenario6 <- run_replications(simulate_scenario6, N_REPS)
+
+```
+
+```{r}
+# Analisar resultados através da função de análise ao Cenário 6
+analysis6 <- analyze_scenario(results_scenario6, "Cenário 6: Limite de Tempo e Aumento do Back Office")
+
+# Métricas gerais (tempos médios de espera e totais)
+print(analysis6$metrics[[1]])
+
+
+```
+
+O tempo médio de serviço, com uma média de aproximadamente 4.48 minutos, mostra que o atendimento efetivo, tanto para marcações presenciais quanto por telefone, é relativamente rápido. Esse tempo é razoável, principalmente porque o processo de marcação de exames médicos pode incluir etapas adicionais, como a confirmação de dados e informações detalhadas sobre o exame. O valor demonstra que o atendimento direto é eficiente e bem executado.
+
+Além disso, o tempo médio de espera é de apenas 0.25 minutos (ou cerca de 15 segundos), o que sugere que o aumento de operadores no back office e a implementação de um limite de tempo para as chamadas telefónicas contribuíram para reduzir substancialmente os tempos de espera. Esse valor é baixo e indica que o sistema está bem ajustado em relação à capacidade de atendimento e ao volume de chamadas e atendimentos presenciais, minimizando a frustração do cliente.
+
+Por fim, o tempo médio total no sistema, somando espera e atendimento, é de aproximadamente 4.73 minutos, o que representa um tempo de resposta rápido e eficiente. Esse valor confirma que o cenário 6 é eficaz na gestão da procura, proporcionando aos clientes uma experiência de atendimento ágil, com baixa espera e um tempo total no sistema muito próximo do tempo médio de atendimento.
+
+```{r}
+# Métricas de utilização de recursos e tamanho das filas
+print(analysis6$metrics[[2]])
+
+```
+
+A utilização média dos recursos é de cerca de 44%, indicando uma carga de trabalho equilibrada que previne sobrecargas e permite atender a picos de demanda sem comprometer o atendimento. O comprimento médio da fila é de apenas 0.10, o que reflete filas mínimas e eficiência no atendimento. Esses resultados confirmam que o cenário 6 otimiza a alocação de recursos.
+
+```{r}
+# Métricas específicas para chamadas telefônicas
+print(analysis6$metrics[[3]])
+```
+
+O tempo médio de espera ao telefone é de 0.32 minutos, refletindo um atendimento rápido. O número médio de chamadas totais é de 46, o que indica um volume consistente de chamadas. Em média, 18 chamadas ficam em espera, o que sugere algum congestionamento, mas o tempo de espera reduzido ajuda a minimizar o impacto.
+
+```{r}
+# Gráfico de utilização dos recursos (back office e guichet)
+analysis6$plots[[1]]
+```
+
+De acordo com o gráfico de utilização dos recursos no cenário 6, observamos dois comportamentos distintos. No back office, que conta agora com 3 operadores dedicados ao atendimento telefônico, a utilização média situa-se em aproximadamente 33%, apresentando uma variabilidade considerável que oscila entre 15% e 48%. Esta variação maior sugere momentos de pico no atendimento telefónico que precisam ser considerados no planeamento operacional. Já nos guichets de atendimento presencial, que mantiveram 2 postos, a utilização é significativamente menor, com uma média em torno de 10% e uma variabilidade mais reduzida, flutuando entre 8% e 15%. Esta baixa utilização dos guichets indica uma possível subutilização dos recursos presenciais, sugerindo que poderia ser benéfico realocar um dos guichets para reforçar o atendimento telefônico no back office, especialmente considerando os momentos de maior procura identificados pela variabilidade observada.
+
+```{r}
+# Gráfico de tempo total no sistema ao longo da simulação
+analysis6$plots[[2]]
+```
+
+A maioria dos tempos de atendimento concentra-se abaixo dos 20 minutos, com uma grande densidade de observações entre 0 e 10 minutos. Esta distribuição sugere que o sistema funciona de maneira eficiente na maior parte do tempo, com a ocorrência de alguns eventos extremos que não chegam a comprometer o desempenho global do sistema. O padrão relativamente estável da linha média (azul) indica que as modificações implementadas neste cenário conseguiram manter os tempos de atendimento sob controlo, mesmo com a variabilidade natural do processo.
+
+```{r}
+# Gráfico de uso dos recursos ao longo do tempo
+analysis6$plots[[3]]
+```
+
+O gráfico mostra o uso dos recursos ao longo do tempo no cenário 6, dividido entre back office e guichets. No painel do back office (esquerda), observamos que o limite máximo de 3 operadores (linha vermelha superior) nunca é totalmente utilizado, com o uso real (linhas rosa claras) variando principalmente entre 1 e 2 operadores simultâneos. Há uma maior intensidade de uso no início do período, que gradualmente se estabiliza, mostrando que o sistema consegue gerir eficientemente o fluxo de chamadas com os 3 operadores disponíveis. No painel dos guichets (direita), o limite de 2 guichets (linha vermelha superior) raramente é atingido. O uso efetivo (linhas rosa claras) permanece consistentemente baixo, geralmente utilizando apenas 1 guichet ou menos, confirmando a subutilização deste recurso. Esta visualização temporal reforça a conclusão de que poderia ser benéfico realocar um dos guichets para o back office, dado que o atendimento presencial mantém uma procura consistentemente baixa ao longo de todo o período simulado.
+
+```{r}
+# Gráfico da distribuição de clientes em fila de espera
+analysis6$plots[[4]]
+```
+
+É evidente um padrão onde o atendimento telefónico apresenta de forma consistente um número maior de clientes em espera em comparação com o atendimento presencial. Os dados mostram que o pico de espera para chamadas telefónicas ocorre no intervalo de 90-120 minutos, com aproximadamente 250 clientes que tiveram de aguardar em linha. Para o atendimento presencial, o pico é observado no intervalo de 120-150 minutos, com cerca de 120 clientes que tiveram de aguardar a sua vez para ser atendidos. Há uma tendência de redução nas filas no último intervalo (210-240 minutos) para ambos os tipos de atendimento, o que reforça o impacto do período final do expediente na procura. 
