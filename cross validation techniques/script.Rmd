@@ -1,0 +1,121 @@
+---
+title: "Trabalho 2"
+author: "Felipe Pereira/João Dias"
+date: "27/10/2024"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+---
+
+## Pergunta 1
+
+Os métodos de validação cruzada são técnicas de reamostragem usados para quantificar erros de estimação e avaliar a qualidade de previsão de modelos. Estes métodos dividem uma amostra original em dois subconjuntos: o conjunto de treino, que serve para ajustar o modelo, e o conjunto de teste, usado para avaliar a precisão da previsão. Os principais tipos de validação cruzada são:
+
+1.  **Leave-One-Out (n-fold)**: Cada observação é usada uma vez como teste enquanto as restantes compõem o treino. Isto gera n modelos diferentes, um para cada exclusão. A média dos erros de previsão é calculada para avaliar o modelo.
+
+2.  **K-fold**: A amostra é dividida em K subconjuntos (ou *folds*). Em cada rodada, um dos folds é usado para teste enquanto os restantes K-1 são usados para treino. No final, calcula-se a média dos erros de previsão de cada rodada, oferecendo um balanço entre o viés e a variância.
+
+Ambos os métodos permitem comparar o desempenho de modelos concorrentes, selecionando aquele com menor erro quadrático médio.
+
+```{r}
+set.seed(110305) 
+
+funcao_geradora_dos_dados <- function(n, ruido){
+  x <- runif(n, -10, 10)
+  y <- 2 + 1.5 * x - 0.7 * x^2 + 0.05 * x^3 + rnorm(n, mean = 0, sd = ruido)
+  data.frame(x = x, y = y)
+}
+
+dados <- funcao_geradora_dos_dados(n = 1000, ruido = 1)
+plot(dados$x, dados$y, main = "Dados gerados", xlab = "x", ylab = "y")
+
+```
+
+## Pergunta 2
+
+```{r}
+# Modelo de regressão linear simples
+modelo_linear <- lm(y ~ x, data = dados)
+
+# Modelo de regressão polinomial de terceiro grau
+modelo_polinomial <- lm(y ~ x + I(x^2) + I(x^3), data = dados)
+
+# Coeficientes dos modelos
+print("Coeficientes do modelo linear:")
+print(coef(modelo_linear))
+
+print("Coeficientes do modelo polinomial:")
+print(coef(modelo_polinomial))
+
+# Adicionar as previsões ao gráfico
+x_seq <- seq(min(dados$x), max(dados$x), length.out = 1000)
+y_pred_linear <- predict(modelo_linear, newdata = data.frame(x = x_seq))
+y_pred_polinomial <- predict(modelo_polinomial, newdata = data.frame(x = x_seq))
+
+plot(dados$x, dados$y, main = "Dados gerados", xlab = "x", ylab = "y")
+lines(x_seq, y_pred_linear, col = "blue", lwd = 2, lty = 2)  # Modelo Linear
+lines(x_seq, y_pred_polinomial, col = "red", lwd = 2)        # Modelo Polinomial
+legend("bottom", legend = c("Modelo Linear", "Modelo Polinomial"), 
+       col = c("blue", "red"), lty = c(2, 1), lwd = 2, horiz = TRUE, inset = 0.05)
+```
+
+### Descrição dos Modelos
+
+**Regressão Linear Simples (modelo_linear)**: Este modelo assume uma relação linear entre a variável independente x e a variável dependente y. No contexto do problema, o modelo linear é da forma:
+
+$$y = \beta_0 + \beta_1 x + \epsilon$$
+
+Aqui, $\beta_0$ representa a intersecção, $\beta_1$ é o declive, e $\epsilon$ representa o erro aleatório. A regressão linear simples é geralmente fácil de interpretar, mas, como neste caso os dados foram gerados com um componente polinomial, já antecipamos que este modelo possa não ser o mais adequado para capturar a complexidade da relação entre as variáveis.
+
+**Regressão Polinomial de Terceiro Grau (modelo_polinomial):**
+
+$$y = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \epsilon$$
+
+Aqui, $\beta_2$ e $\beta_3$ são coeficientes adicionais que permitem modelar a relação entre $x$ e $y$ como uma curva de terceiro grau. Este modelo pode ajustar-se melhor aos dados gerados, pois a função de geração inclui termos quadráticos e cúbicos.
+
+## Pergunta 3
+
+```{r}
+library(cvTools)
+
+# Definir os números de folds para análise
+folds_list <- c(5, 10, 20, 50)
+set.seed(110305) 
+
+# Função para calcular o MSE usando a validação cruzada
+calcula_mse <- function(folds) {
+  dados <- funcao_geradora_dos_dados(n = 1000, ruido = 1)
+  
+  # Definir os grupos de validação cruzada
+  grupos <- cvFolds(nrow(dados), K = folds, R = 1)
+  
+  # Ajustar os modelos
+  modelo_linear <- lm(y ~ x, data = dados)
+  modelo_polinomial <- lm(y ~ x + I(x^2) + I(x^3), data = dados)
+  
+  # Calcular MSE para cada modelo
+  cv_linear <- cvLm(modelo_linear, cost = mspe, folds = grupos, seed = 110305)$cv
+  cv_polinomial <- cvLm(modelo_polinomial, cost = mspe, folds = grupos, seed = 110305)$cv
+  
+  return(c(cv_linear, cv_polinomial))
+}
+
+# Aplicar a função para diferentes números de folds
+resultados <- t(sapply(folds_list, calcula_mse))
+colnames(resultados) <- c("MSE Linear", "MSE Polinomial")
+rownames(resultados) <- paste("Folds =", folds_list)
+
+resultados
+
+```
+
+## Pergunta 4
+
+Os valores do Erro Quadrático Médio (MSE) para o modelo linear são significativamente elevados, variando entre aproximadamente 474.36 e 475.22, independentemente do número de folds. Estes valores altos indicam que o modelo linear não está a ajustar-se bem aos dados, evidenciando que ele tem dificuldades em capturar a complexidade da relação entre as variáveis, como já seria de esperar pela análise dos resultados do gráfico acima, que mostrava um fraco ajuste do modelo linear, e onde agora temos uma maior segurança em generalizar estes resultados após a validação cruzada em vários folds.
+
+Por outro lado, os valores do MSE para o modelo polinomial são muito mais baixos, situando-se entre aproximadamente 0.955 e 0.961. Isto demonstra que o modelo polinomial de terceiro grau ajusta-se de forma muito mais eficaz aos dados do que o modelo linear. Além disso, a consistência dos valores do MSE do modelo polinomial através dos diferentes folds sugere que ele apresenta uma performance estável e confiável em relação à previsão.
+
+Ao comparar os dois modelos, a diferença significativa entre os MSE indica claramente que o modelo polinomial é preferível em termos de ajuste aos dados, enquanto o modelo linear apresenta um desempenho insatisfatório, com um erro muito elevado. A evolução dos MSE do modelo polinomial em relação ao número de folds é relativamente estável, mostrando que, mesmo ao aumentar a complexidade da validação cruzada, este modelo mantém um desempenho robusto.
+
+No que diz respeito ao tradeoff entre variância e viés, o modelo linear, com o seu alto MSE, provavelmente sofre de viés alto e variância baixa, pois não consegue capturar adequadamente a relação entre as variáveis. Em contraste, o modelo polinomial, com o seu MSE baixo, sugere um melhor equilíbrio entre viés e variância, indicando que ele consegue ajustar-se bem aos dados.
