@@ -1,0 +1,241 @@
+---
+title: "TPC3"
+author: "João Dias"
+date: "2023-10-02"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Considere a variável aleatória X: número de telemóveis vendidos por dia numa pequena loja
+especializada. Admita que o comportamento de X pode ser descrito pela seguinte função de
+probabilidade
+x 0 1 2 3 4 5 6
+𝑓(𝑥) 0.05 0.30 0.35 0.20 0.05 0.03 0.02
+
+### 1.
+
+(Teórica) Justifique que a função apresentada pode ser considerada uma função de
+probabilidade.
+
+Pode considerar-se uma função de probabilidade porque se verifica que todos os valores de f(x) são não negativos (por outras palavras, para todos os valores de x: f(x)>=0) e a soma de todas as probabilidades é igual a 1 (por outras palavras: 0.05+0.30+0.35+0.20+0.05+0.03+0.02=1).
+
+
+### 2. 
+
+Defina uma função em R que permita obter, para qualquer x real, a probabilidade de
+ocorrência de x. Use essa função para obter um vetor com os valores da função calculados
+nos pontos de probabilidade não nula.
+
+```{r, echo = TRUE}
+
+xe1 <- 0:6
+
+fxe1 <- function(x) {
+  if (x == 0) {prob <- 0.05}
+  else if (x == 1) {prob <- 0.3}
+  else if (x == 2) {prob <- 0.35}
+  else if (x == 3) {prob <- 0.2}
+  else if (x == 4) {prob <- 0.05} 
+  else if (x == 5) {prob <- 0.03}
+  else if (x == 6) {prob <- 0.02}
+  else {prob <- 0}
+  return(prob)
+}
+
+fx_applied <- sapply(xe1,fxe1)
+fx_applied
+
+```
+
+
+### 3.
+
+Represente graficamente a função de probabilidade.
+
+```{r, echo = TRUE}
+
+plot (x=xe1,                     
+      y=fx_applied,                    
+      type="h",               
+      main="Função de probabilidade de X",
+      xlab="x",                     
+      ylab="f(x)",              
+      col="grey"            
+)
+
+points(x=xe1,                     
+       y=fx_applied,
+       pch=16,                      
+       col="red"
+)
+
+```
+
+
+### 4.
+
+. Obtenha a função de distribuição, F(𝑥) , nos pontos de probabilidade não nula de X.
+
+```{r, echo = TRUE}
+
+F_aux <- cumsum(fx_applied)
+
+Fx_ex1 <- function(x) {
+  (x < 1) * 0 +
+  (1 <= x & x < 2) * F_aux[1] +
+  (2 <= x & x < 3) * F_aux[2] +
+  (3 <= x & x < 4) * F_aux[3] +
+  (x >= 4) * 1
+}
+
+Fx_0 <- Fx_ex1(0)
+Fx_2 <- Fx_ex1(2)
+Fx_2.5 <- Fx_ex1(2.5)
+Fx_4 <- Fx_ex1(4)
+Fx_5 <- Fx_ex1(5)
+
+print(paste("F(0):", Fx_0))
+print(paste("F(2):", Fx_2))
+print(paste("F(2.5):", Fx_2.5))
+print(paste("F(4):", Fx_4))
+print(paste("F(5):", Fx_5))
+
+```
+
+
+### 5.
+
+Defina uma função em R que permita obter, para qualquer x real, o valor da função de
+distribuição de X, F(𝑥), nesse ponto.
+
+
+```{r, echo = TRUE}
+
+FFx_ex1 <- stepfun(
+  xe1,
+  c(0, cumsum(fx_applied)),
+  right = FALSE
+)
+
+# Exemplo de uso
+FFx_0 <- FFx_ex1(0)
+FFx_2 <- FFx_ex1(2)
+FFx_2.5 <- FFx_ex1(2.5)
+FFx_4 <- FFx_ex1(4)
+FFx_5 <- FFx_ex1(5)
+
+print(paste("F(0) usando stepfun:", FFx_0))
+print(paste("F(2) usando stepfun:", FFx_2))
+print(paste("F(2.5) usando stepfun:", FFx_2.5))
+print(paste("F(4) usando stepfun:", FFx_4))
+print(paste("F(5) usando stepfun:", FFx_5))
+
+```
+
+
+### 6.
+
+Represente graficamente a função de distribuição.
+
+```{r, echo = TRUE}
+
+plot.stepfun(
+  FFx_ex1(xe1),
+  verticals = FALSE,
+  pch = 16,
+  col = "red",
+  main = "Função distribuição de X",
+  xlab = "x",
+  ylab = "F(x)"
+)
+
+```
+
+
+### 7.
+
+Qual a probabilidade de, em certo dia, serem vendidos mais do que 2 e não mais do que 5
+telemóveis? Escrever a probabilidade pretendida em termos da variável aleatória definida, e
+calculá-la:
+
+• Com recurso à função de probabilidade
+
+```{r, echo = TRUE}
+
+crfp <- fxe1(3) + fxe1(4) + fxe1(5)
+crfp
+
+```
+
+• Com recurso à função de distribuição
+
+```{r, echo = TRUE}
+
+crfd <- FFx_ex1(5) - FFx_ex1(2)
+crfd
+
+```
+
+
+### 8.
+
+Repetir 6, para vendas entre 1 e 4 unidades (incluindo ambos os extremos).
+
+```{r, echo = TRUE}
+
+plot.stepfun(
+  FFx_ex1(1:4),
+  verticals = FALSE,
+  pch = 16,
+  col = "red",
+  main = "Função distribuição de X",
+  xlab = "x",
+  ylab = "F(x)"
+)
+
+```
+
+
+### 9.
+
+Repetir 6, para um número de telemóveis vendidos superior a 3.
+
+```{r, echo = TRUE}
+
+plot.stepfun(
+  FFx_ex1(4:6),
+  verticals = FALSE,
+  pch = 16,
+  col = "red",
+  main = "Função distribuição de X",
+  xlab = "x",
+  ylab = "F(x)"
+)
+
+```
+
+
+### 10.
+
+Calcular o valor esperado, a variância e o desvio-padrão de X.
+
+```{r, echo = TRUE}
+
+# Valor esperado
+ve <- sum(xe1 * fx_applied)
+ve
+
+# Variância
+v <- sum((xe1 - ve)^2 * fx_applied)
+v
+
+# Desvio padrão
+dp <- sqrt(v)
+dp
+
+```

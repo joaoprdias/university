@@ -1,0 +1,110 @@
+---
+title: "TPC1"
+author: "João Dias"
+date: "2023-09-18"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Exercício 1
+
+Considere a experiência aleatória na qual é efetuado o lançamento de dois dados, o primeiro com 4 faces, numeradas de 1 a 4, equilibrado; o segundo com 8 faces, numeradas de 2 a 9, também equilibrado.
+1. Crie o espaço de resultados e o espaço de probabilidades para o exercício em causa.
+
+
+```{r, echo = TRUE}
+
+# Criar os vetores para os dados
+dado_um<-c(1,2,3,4)
+dado_dois<-c(2,3,4,5,6,7,8,9)
+
+# Criar o espaço de resultados
+esp_res_dados<-expand.grid("Dado_Um"=dado_um, "Dado_Dois"=dado_dois)
+esp_res_dados
+
+# Criar o espaço de probabilidades
+probs <- rep((1/nrow(esp_res_dados)), times=nrow(esp_res_dados))
+esp_prob_dados <- cbind(esp_res_dados, "Probabilidade"=probs)
+esp_prob_dados
+
+```
+
+### Exercício 2
+
+Construa o acontecimento
+A – a soma dos pontos dos 2 dados é par
+Calcule a probabilidade de ocorrência deste acontecimento.
+
+```{r, echo = TRUE}
+
+# Criar a condição para que a soma dos pontos dos dois dados seja par - ter resto 0 ao dividir por 2
+soma_par <- which((esp_prob_dados$Dado_Um+esp_prob_dados$Dado_Dois)%%2==0)
+
+# Criar um acontecimento A com as linhas do vetor de indíce filtrados com base na condição acima
+acontecimento_A <- esp_prob_dados[soma_par,]
+acontecimento_A
+
+# Probabilidade do acontecimento A
+prob_A <- sum(acontecimento_A$Probabilidade)
+prob_A
+
+```
+
+### Exercício 3
+
+Construa o acontecimento
+B – os pontos dos dois dados são iguais
+Calcule a probabilidade de ocorrência deste acontecimento.
+
+```{r, echo = TRUE}
+
+# Criar a condição para os pontos dois dados serem iguais - quando um se divide pelo o outro o resultado tem de ser necessariamente 1
+pontos_iguais <- which((esp_prob_dados$Dado_Um/esp_prob_dados$Dado_Dois)==1)
+
+# Criar um acontecimento B com as linhas do vetor de indíce filtrados com base na condição acima
+acontecimento_B <- esp_prob_dados[pontos_iguais,]
+acontecimento_B
+
+# Probabilidade do acontecimento B
+prob_B <- sum(acontecimento_B$Probabilidade)
+prob_B
+
+
+```
+
+
+### Exercício 4
+
+Calcule a probabilidade do acontecimento “A soma dos dois dados é par e os pontos dos dados são iguais”.
+
+```{r, echo = TRUE}
+
+# Intersecção dos acontecimentos A e B que satisfazem as condições do enunciado
+acontecimento_C <- dplyr::intersect(acontecimento_A, acontecimento_B)
+acontecimento_C
+
+# Cálculo da probabilidade do acontecimento C
+prob_C <- sum(acontecimento_C$Probabilidade)
+prob_C
+
+```
+
+
+### Exercício 5
+
+Calcule a probabilidade do acontecimento “A soma dos dois dados é par ou os pontos dos dois dados são iguais.
+
+```{r, echo = TRUE}
+
+# União dos acontecimentos A e B que satisfazem as condições do enunciado
+acontecimento_D <- dplyr::union(acontecimento_A, acontecimento_B)
+acontecimento_D
+prob_D <- sum(acontecimento_D$Probabilidade)
+prob_D
+
+```

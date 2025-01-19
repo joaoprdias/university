@@ -1,0 +1,136 @@
+---
+title: "TPC4"
+author: "João Dias"
+date: "2023-10-09"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1. 
+
+No estudo para o lançamento de um novo iogurte probiótico com características
+inovadoras, a empresa de estudos de mercado responsável pelo Marketing e Publicidade da
+marca acredita que 40% dos consumidores target deste produto estão dispostos a pagar um
+preço mais elevado por este tipo de produtos.
+Se um entrevistador conseguir contactar 200 pessoas desse segmento de mercado, qual a
+probabilidade de encontrar mais de 100 indivíduos dispostos a pagar um preço mais elevado
+por este tipo de produtos?
+
+Em cada exercício:
+
+#### 1.1. 
+
+Defina teoricamente a variável aleatória de interesse
+
+X - número de indivíduos dispostos a pagar um preço mais elevado pelo iogurte da marca em 200 entrevistas
+
+
+#### 1.2. 
+Especifique teoricamente o modelo probabilístico em causa
+
+O modelo probabilístico em causa é uma distribuição binomial, já que se têm acontecimentos independentes, com duas possibilidades de resultado (sucesso ou fracaso) e onde se procura contar o número de sucessos (número de indivíduos dispostos a pagar mais pelo iogurte) nas 200 entrevistas.
+
+
+#### 1.3. 
+
+Explicite teoricamente a probabilidade pedida
+
+Com a distribuição binomial é possível calcular a probabilidade de encontrar um determinado número de sucessos num número fixo de tentativas, dado um determinado valor de probabilidade de sucesso (no nosso caso 0.4). Assim, se fizermos 1 menos a soma das probabilidades de encontrar 0, 1, 2, ..., 100 sucessos obtemos a probabilidade de sucesso de encontrar mais de 100 indivíduos dispostos a pagar um preço mais elevado por um novo iogurte probiótico.
+
+
+#### 1.4. 
+
+Calcule a probabilidade pedida, recorrendo a funções R apropriadas.
+
+```{r, echo = TRUE}
+
+n <- 200
+p <- 0.4
+prob <- 1-sum(dbinom(0:100, n, p))
+prob
+
+```
+
+
+### 2.
+
+Numa ciclovia de Lisboa está instalado um sensor que permite contar em tempo real o
+número de bicicletas que aí passam. Admite-se que o número de ciclistas que passam nesse
+sensor em cada 5 minutos pode ser modelizado por uma variável aleatória com distribuição
+de Poisson de média 3,1.
+
+#### 2.1. 
+Defina teoricamente a variável aleatória de interesse
+
+X - número de ciclistas que passam no sensor a cada 5 minutos
+
+
+#### 2.2. 
+Especifique teoricamente o modelo probabilístico em causa
+
+Trata-se uma distribuição de Poisson já que temos uma contagem de eventos (passagem de bicicletas por um sensor) em intervalos de natureza contínua (intervalos temporais de 5 em 5 minutos)
+
+
+#### 2.3. 
+Explicite teoricamente a probabilidade pedida
+
+Aplicado a este exercício, com a distribuição de Poisson é possível calcular a probabilidade de acontecimento de eventos num determinado período de tempo. 
+
+
+#### 2.4. 
+
+a) 
+Calcule a probabilidade pedida, recorrendo a funções R apropriadas.
+
+```{r, echo = TRUE}
+
+lambda <- 3.1
+
+P0 <- dpois(0, lambda)
+P1 <- dpois(1, lambda)
+P2 <- dpois(2, lambda)
+P3 <- dpois(3, lambda)
+
+Pmax <- P0 + P1 + P2 + P3
+Pmax
+
+```
+
+b) 
+Qual a probabilidade de, numa hora, passarem aí, no mínimo, 30 ciclistas?
+
+```{r, echo = TRUE}
+
+lambda <- 12*3.1
+
+prob <- 0
+for (i in 1:29) {
+  prob <- prob + dpois(i, lambda)
+}
+
+print(1 - prob)
+
+```
+
+c) Qual a probabilidade de, em 10 períodos distintos de 5 minutos, ocorrerem no máximo 4
+períodos onde o número de ciclistas detetados pelo sensor é no máximo 3?
+
+
+```{r, echo = TRUE}
+
+lambda <- 3.1
+kmax <- 3
+per <- 10 
+
+cinco_min <- ppois(kmax, lambda)
+
+probc <- pbinom(4, per, cinco_min)
+probc
+
+
+```

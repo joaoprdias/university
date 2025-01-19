@@ -1,0 +1,114 @@
+---
+title: "TPC5"
+author: "João Dias"
+date: "2023-10-23"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### a. 
+
+Qual é a probabilidade de a empresa solicitar no máximo 1650 metros cúbicos num
+determinado pedido?
+
+#### a1
+
+Determine este valor exatamente
+
+```{r, echo = TRUE}
+
+pnorm(1650, mean = 1500, sd = 100)
+
+```
+
+#### a2 
+
+Obtenha uma aproximação a este valor com base numa simulação de 1000 pedidos
+
+```{r, echo = TRUE}
+
+simul <- rnorm(1000, mean = 1500, sd = 100)
+
+count_1 <- length(which(simul <= 1650))
+
+aprox_prob <- count_1/1000
+
+aprox_prob
+
+```
+
+### b.
+
+Qual o menor número de metros cúbicos dos 5% maiores consumos?
+
+#### b1 
+
+Determine este valor exatamente
+
+```{r, echo = TRUE}
+
+qnorm(0.95, mean = 1500, sd = 100)
+
+```
+
+#### b2
+
+Obtenha uma aproximação a este valor com base numa simulação de 1000 pedidos
+
+```{r, echo = TRUE}
+
+quantile(simul, 0.95)
+
+```
+
+### c.
+
+Admita que, entre maio e outubro, a empresa faz 40 pedidos de água à barragem. Qual a
+probabilidade de 10 ou mais destes pedidos serem de pelo menos 1650 m3?
+
+#### c1
+
+Defina a variável aleatória de interesse e represente graficamente a respetiva função
+de probabilidade.
+
+X - número de pedidos de água que foram de pelo menos 1650m3, entre os 40 pedidos recebidos
+
+```{r, echo = TRUE}
+
+prob <- pnorm(1650, mean = 1500, sd = 100, lower.tail = FALSE)
+prob
+
+x <- 0:40
+y <- dbinom(x, size = 40, prob = prob)
+
+barplot(y, names.arg = x, xlab = "Qtd de pedidos c/ pelo menos 1650m3", ylab = "Prob", main = "Função de Probabilidade")
+
+```
+
+#### c2
+
+Especifique teoricamente a probabilidade pretendida e calcule-a.
+
+A variável X definida em c1 apresenta uma distribuição binomial, o que significa que é possível calcular a probabilidade de obter um determinado número de pedidos de pelo menos 1650 m3. No caso específico, estamos interessados na probabilidade de haver 10 ou mais pedidos destes pedidos e para este cálculo podemos usar a função pbinom.
+
+
+```{r, echo = TRUE}
+
+pbinom(9, size = 40, prob = prob, lower.tail = F)
+
+```
+
+#### c3
+
+Em média, quantos pedidos em 40 estão nestas condições?
+
+```{r, echo = TRUE}
+
+40*prob
+
+```

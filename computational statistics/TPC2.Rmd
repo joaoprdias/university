@@ -1,0 +1,113 @@
+---
+title: "TPC2"
+author: "João Dias"
+date: "2023-09-25"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1.
+
+Para um prédio em construção, uma empresa apresentou orçamentos em separado para a execução da parte elétrica do edifício e para a execução da rede de telecomunicações. O engenheiro responsável pelos orçamentos acredita que a probabilidade de ganhar a execução da rede elétrica é de 0.5. Caso a empresa ganhe a execução da rede elétrica, ele estima a chance de ganhar a execução da rede de telecomunicações em 0.75, mas caso isso não aconteça, a probabilidade de vir a executar a rede de telecomunicações deverá ser apenas 1/3. O engenheiro gostaria de saber qual a probabilidade:
+
+##### 1.1.
+
+De ganhar o contrato de execução da rede de telecomunicações:
+
+
+```{r, echo = TRUE}
+
+# Definir as probabilidades
+prob_re <- 0.5
+prob_rt_dado_re <- c(0.75, 1/3)
+
+# Cálculo da probabilidade total
+prob_rt <- sum(prob_rt_dado_re*prob_re)
+prob_rt
+
+```
+
+##### 1.2.
+
+De ganhar os dois contratos:
+
+```{r, echo = TRUE}
+
+# Probabilidade de ganhar os dois contratos
+prob_dois_contratos <- prob_rt_dado_re[1] * prob_re
+prob_dois_contratos
+
+```
+
+
+##### 1.3.
+
+De ganhar um e um só deles
+
+```{r, echo = TRUE}
+
+prob_ganhar_so_um <- prob_re * (1-prob_rt_dado_re[1]) + (1-prob_re) * (prob_rt_dado_re[2])
+prob_ganhar_so_um
+
+```
+
+##### 1.4.
+
+De ganhar o contrato da parte elétrica, sabendo que já ganhou o da rede de telecomunicações
+
+```{r, echo = TRUE}
+
+prob_re_dado_rt <- prob_re * prob_rt_dado_re[1] / prob_rt
+prob_re_dado_rt
+
+```
+
+### 2.
+
+A empresa vai apresentar orçamentos do mesmo tipo para 5 outros edifícios. Considere que se mantêm as condições do caso anterior e o fenómeno de interesse é ganhar ambas as empreitadas (rede elétrica e telecomunicações), com probabilidade calculada em 1.2 acima. Assim, considere a experiência que consiste em registar, para cada um dos 5 edifícios, se foram ganhas as duas empreitadas (situação codificada com 1) ou se aconteceu qualquer outra situação (situação codificada com 0).
+
+##### 2.1.
+
+Represente, através de um dataframe adequado, o espaço de resultados associado a esta experiência, com as probabilidades associadas (espaço de probabilidades).
+
+```{r, echo = TRUE}
+
+# Criar espaço de resultados
+results <- expand.grid("Edificio 1"=c(0,1), "Edificio 2"=c(0,1), "Edificio 3"=c(0,1), "Edificio 4"=c(0,1), "Edificio 5"=c(0,1))
+
+for (i in 1:nrow(results)) {
+  prob_combinacao <- 1
+  for (j in 1:5) {
+    if (results[i, j] == 1) {
+      prob_combinacao <- prob_combinacao * prob_dois_contratos
+    } else {
+      prob_combinacao <- prob_combinacao * (1-prob_dois_contratos)
+    }
+  }
+  results$Probabilidade[i] <- prob_combinacao
+}
+
+# Imprimir df com probabilidades
+results
+
+```
+
+##### 2.2.
+
+Explicite a partir do dataframe construído, o acontecimento A – em pelo menos 3 (dos 5) edifícios foram ganhas as duas empreitadas. Calcule a respetiva probabilidade de ocorrência.
+
+```{r, echo = TRUE}
+
+# Criar um vetor para armazenar os resultados filtrados
+filtered_results <- results[results$`Edificio 1` + results$`Edificio 2` + results$`Edificio 3` + results$`Edificio 4` + results$`Edificio 5` >= 3, ]
+
+# Calcular a soma das probabilidades dos resultados filtrados
+probability_A <- sum(filtered_results$Probabilidade)
+probability_A
+
+```
