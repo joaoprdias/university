@@ -1,0 +1,11 @@
+ID,TITULO,ANO,ID_TIPO,DURACAO,DIRECAO,CINEMA,ID_OSCAR
+1,The Father,2020,1,98,Florian Zeller,S,1
+2,Soul,2020,2,100,Pete Docter | Kemp Powers,S,2
+3,The Trial of the Chicago 7,2020,3,129,Aaron Sorkin,N,0
+4,Bad Boys for Life,2020,4,124,Adil El Arbi | Bilall Fallah,N,0
+5,Enola Holmes,2020,5,123,Harry Bradbeer,N,0
+6,Homem-Aranha: Sem Volta para Casa,2021,6,148,Jon Watts,S,1
+7,Cruella,2021,1,134,Craig Gillespie,S,1
+8,Shang-Chi and the Legend of the Ten Rings,2021,6,132,Destin Daniel Cretton,S,0
+9,A Quiet Place Part II,2021,7,157,John Krasinski,N,0
+10,The Black Phone,2021,7,103,Scott Derrickson,N,3

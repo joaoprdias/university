@@ -1,0 +1,1034 @@
+ID,GENERO,IDADE,FILHOS,PAIS,INTERESSES
+201,F,48,S,Fullerton,Drama -  Histórico
+202,F,49,N,Nashville,Fantasia -  Animação
+203,M,47,S,Berna,Ação -  Policial
+204,M,38,N,Atlanta,Drama -  Histórico
+205,M,38,N,Berna,Fantasia -  Animação
+206,M,44,S,Salem,Drama -  Histórico
+207,F,34,S,Amarillo,Fantasia -  Animação
+208,M,33,S,Lyon,Ação -  Policial
+209,F,54,S,Murfreesboro,Drama -  Histórico
+210,F,41,S,Minneapolis,Drama -  Histórico
+211,M,25,N,Innsbruck,Ação -  Policial
+212,M,38,S,Worcester,Drama -  Histórico
+213,M,50,N,Valetta,Fantasia -  Animação
+214,M,27,N,Arlington,Drama -  Histórico
+215,F,37,S,San Jose,Fantasia -  Animação
+216,F,51,S,Paris,Fantasia -  Animação
+217,F,22,N,Las Vegas,Drama -  Histórico
+218,M,46,S,El Paso,Fantasia -  Animação
+219,F,20,N,Arlington,Ação -  Policial
+220,F,37,N,Milano,Drama -  Histórico
+221,F,31,S,Lincoln,Ação -  Policial
+222,F,45,S,Hayward,Drama -  Histórico
+223,F,36,S,Lyon,Fantasia -  Animação
+224,M,35,S,Moreno Valley,Ação -  Policial
+225,F,48,S,Venice,Fantasia -  Animação
+226,M,40,N,Las Vegas,Ação -  Policial
+227,M,54,S,Stockton,Ação -  Policial
+228,F,42,S,Indianapolis,Drama -  Histórico
+229,F,54,N,New York,Drama -  Histórico
+230,M,18,N,Santa Ana,Ação -  Policial
+231,F,33,S,San Jose,Fantasia -  Animação
+232,M,34,S,London,Ação -  Policial
+233,F,22,N,Salt Lake City,Ação -  Policial
+234,M,28,S,Berna,Drama -  Histórico
+235,M,37,S,Lakewood,Drama -  Histórico
+236,M,51,S,Seattle,Terror -  Fantasia
+237,F,47,N,Jacksonville,Drama -  Histórico
+238,F,33,S,San Diego,Terror -  Fantasia
+239,M,45,S,Irving,Ação -  Policial
+240,F,20,N,Kansas City,Terror -  Fantasia
+241,F,40,N,Louisville,Terror -  Fantasia
+242,M,44,S,Ontario,Ação -  Policial
+243,M,47,S,Berna,Fantasia -  Animação
+244,F,52,N,San Antonio,Fantasia -  Animação
+245,F,22,N,San Francisco,Drama -  Histórico
+246,F,19,N,Madrid,Fantasia -  Animação
+247,F,25,N,Columbus,Drama -  Histórico
+248,F,30,S,Tulsa,Drama -  Histórico
+249,F,23,N,Minneapolis,Drama -  Histórico
+250,M,37,N,Norfolk,Fantasia -  Animação
+251,F,21,N,Los Angeles,Fantasia -  Animação
+252,F,44,S,Pittsburgh,Fantasia -  Animação
+253,F,53,N,San Bernardino,Ação -  Policial
+254,M,22,N,San Antonio,Ação -  Policial
+255,F,33,S,Houston,Terror -  Fantasia
+256,M,26,N,Denver,Fantasia -  Animação
+257,M,22,N,Garland,Fantasia -  Animação
+258,M,29,S,Otawa,Ação -  Policial
+259,F,54,S,San Diego,Fantasia -  Animação
+260,M,43,N,Chicago,Fantasia -  Animação
+261,F,37,S,Stockton,Ação -  Policial
+262,F,36,S,Oklahoma City,Terror -  Fantasia
+263,F,20,N,Salt Lake City,Fantasia -  Animação
+264,F,34,S,Los Angeles,Drama -  Histórico
+265,M,52,N,Amarillo,Terror -  Fantasia
+266,M,36,S,Philadelphia,Terror -  Fantasia
+267,M,36,S,Madison,Terror -  Fantasia
+268,F,33,S,Fullerton,Drama -  Histórico
+269,M,55,N,Madrid,Fantasia -  Animação
+270,M,45,S,Lisbon,Ação -  Policial
+271,M,43,S,Valetta,Drama -  Histórico
+272,F,19,N,Louisville,Drama -  Histórico
+273,F,52,S,Albuquerque,Fantasia -  Animação
+274,F,47,N,Wien,Terror -  Fantasia
+275,F,51,N,Fayetteville,Terror -  Fantasia
+276,M,31,S,Norfolk,Fantasia -  Animação
+277,F,37,S,London,Terror -  Fantasia
+278,F,39,S,Boston,Ação -  Policial
+279,F,28,S,Madrid,Drama -  Histórico
+280,M,43,S,San Diego,Drama -  Histórico
+281,M,42,S,San Francisco,Terror -  Fantasia
+282,M,34,S,Worcester,Terror -  Fantasia
+283,F,33,S,Bakersfield,Terror -  Fantasia
+284,F,37,S,Huntsville,Ação -  Policial
+285,F,53,N,Lincoln,Fantasia -  Animação
+286,F,33,S,Reno,Drama -  Histórico
+287,M,52,S,Rome,Terror -  Fantasia
+288,M,39,S,Garland,Terror -  Fantasia
+289,F,31,S,Pittsburgh,Drama -  Histórico
+290,M,37,S,Los Angeles,Ação -  Policial
+291,M,33,S,Fayetteville,Fantasia -  Animação
+292,F,25,N,Fayetteville,Terror -  Fantasia
+293,F,32,S,Quebec,Fantasia -  Animação
+294,M,53,N,Paris,Fantasia -  Animação
+295,M,25,N,Toledo,Terror -  Fantasia
+296,F,31,S,Berlin,Fantasia -  Animação
+297,F,20,N,Las Vegas,Drama -  Histórico
+298,F,39,S,Oakland,Fantasia -  Animação
+299,M,44,N,Lakewood,Terror -  Fantasia
+300,M,43,S,Atlanta,Fantasia -  Animação
+301,M,29,S,Charlotte,Ação -  Policial
+302,F,25,N,Bridgeport,Fantasia -  Animação
+303,M,22,N,Richmond,Drama -  Histórico
+304,F,21,N,Washington,Fantasia -  Animação
+305,F,48,S,Worcester,Terror -  Fantasia
+306,F,43,S,Washington,Terror -  Fantasia
+307,F,44,S,Madison,Drama -  Histórico
+308,F,30,S,Santa Ana,Ação -  Policial
+309,M,51,N,Los Angeles,Drama -  Histórico
+310,M,34,S,Colorado Springs,Ação -  Policial
+311,M,42,N,Houston,Drama -  Histórico
+312,M,34,S,Toledo,Ação -  Policial
+313,F,34,S,Nashville,Ação -  Policial
+314,F,52,N,Bucharest,Drama -  Histórico
+315,M,37,S,Stockton,Drama -  Histórico
+316,M,48,S,New Orleans,Drama -  Histórico
+317,F,21,N,Valetta,Terror -  Fantasia
+318,M,26,N,Paris,Ação -  Policial
+319,M,54,S,Phoenix,Ação -  Policial
+320,F,23,N,Salem,Drama -  Histórico
+321,F,28,S,Minneapolis,Ação -  Policial
+322,M,27,N,Laredo,Ação -  Policial
+323,F,54,S,Arlington,Fantasia -  Animação
+324,F,55,N,Sacramento,Ação -  Policial
+325,M,47,S,Venice,Terror -  Fantasia
+326,M,30,S,Long Beach,Fantasia -  Animação
+327,M,52,N,Valetta,Ação -  Policial
+328,F,41,N,Milwaukee,Ação -  Policial
+329,M,50,S,Las Vegas,Ação -  Policial
+330,M,24,N,Richmond,Fantasia -  Animação
+331,F,49,N,Lyon,Fantasia -  Animação
+332,M,53,S,Irving,Ação -  Policial
+333,F,22,N,Long Beach,Drama -  Histórico
+334,F,24,N,El Paso,Fantasia -  Animação
+335,F,41,S,Dallas,Terror -  Fantasia
+336,F,29,S,Reno,Ação -  Policial
+337,M,45,N,Louisville,Fantasia -  Animação
+338,M,51,S,Colorado Springs,Fantasia -  Animação
+339,M,27,N,San Francisco,Terror -  Fantasia
+340,F,19,N,Los Angeles,Terror -  Fantasia
+341,M,34,S,Innsbruck,Ação -  Policial
+342,F,26,N,Los Angeles,Ação -  Policial
+343,F,22,N,Omaha,Fantasia -  Animação
+344,F,49,N,Berlin,Terror -  Fantasia
+345,F,38,S,Las Vegas,Terror -  Fantasia
+346,F,50,N,Norfolk,Fantasia -  Animação
+347,F,19,N,Houston,Fantasia -  Animação
+348,F,31,S,Quebec,Drama -  Histórico
+349,M,38,N,Fayetteville,Ação -  Policial
+350,M,45,S,Tulsa,Drama -  Histórico
+351,M,41,N,Atlanta,Fantasia -  Animação
+352,F,27,N,Colorado Springs,Fantasia -  Animação
+353,F,19,N,Milwaukee,Terror -  Fantasia
+354,F,18,N,Bridgeport,Terror -  Fantasia
+355,M,39,S,Bellevue,Fantasia -  Animação
+356,M,28,S,Prague,Fantasia -  Animação
+357,F,28,S,London,Terror -  Fantasia
+358,F,31,S,Atlanta,Drama -  Histórico
+359,M,23,N,Seattle,Terror -  Fantasia
+360,F,23,N,Innsbruck,Terror -  Fantasia
+361,F,55,S,Berlin,Drama -  Histórico
+362,M,38,N,Berna,Fantasia -  Animação
+363,F,30,S,Portland,Drama -  Histórico
+364,F,19,N,Scottsdale,Fantasia -  Animação
+365,M,50,N,Jacksonville,Terror -  Fantasia
+366,F,35,S,Bakersfield,Drama -  Histórico
+367,F,36,S,Houston,Ação -  Policial
+368,M,35,S,Springfield,Drama -  Histórico
+369,M,49,N,San Francisco,Terror -  Fantasia
+370,F,19,N,Valetta,Fantasia -  Animação
+371,M,24,N,Henderson,Terror -  Fantasia
+372,M,41,N,Fremont,Ação -  Policial
+373,M,40,S,Portland,Ação -  Policial
+374,F,49,N,Venice,Terror -  Fantasia
+375,F,50,S,Hollywood,Drama -  Histórico
+376,F,47,S,Columbus,Fantasia -  Animação
+377,F,43,S,Lancaster,Ação -  Policial
+378,F,31,S,San Francisco,Drama -  Histórico
+379,F,20,N,Pittsburgh,Terror -  Fantasia
+380,F,24,N,Norfolk,Drama -  Histórico
+381,M,27,N,Worcester,Drama -  Histórico
+382,F,53,N,Valetta,Drama -  Histórico
+383,M,23,N,Las Vegas,Terror -  Fantasia
+384,F,29,S,Louisville,Drama -  Histórico
+385,M,19,N,Bridgeport,Fantasia -  Animação
+386,F,33,S,Innsbruck,Terror -  Fantasia
+387,F,19,N,Fremont,Drama -  Histórico
+388,M,36,S,Pittsburgh,Drama -  Histórico
+389,M,55,S,Cincinnati,Fantasia -  Animação
+390,F,18,N,Honolulu,Ação -  Policial
+391,M,51,N,Long Beach,Terror -  Fantasia
+392,M,34,S,Berlin,Drama -  Histórico
+393,F,32,S,Louisville,Fantasia -  Animação
+394,M,33,S,Stockton,Fantasia -  Animação
+395,M,48,S,Hayward,Drama -  Histórico
+396,M,38,N,Baltimore,Ação -  Policial
+397,M,51,S,New York,Terror -  Fantasia
+398,M,30,S,Hollywood,Fantasia -  Animação
+399,M,24,N,Fort Lauderdale,Ação -  Policial
+400,M,22,N,Philadelphia,Ação -  Policial
+401,M,41,N,Albuquerque,Drama -  Histórico
+402,M,31,S,Long Beach,Drama -  Histórico
+403,F,50,S,Bridgeport,Ação -  Policial
+404,M,30,S,Sacramento,Fantasia -  Animação
+405,F,55,S,Springfield,Fantasia -  Animação
+406,F,53,S,Lakewood,Terror -  Fantasia
+407,F,54,N,Venice,Fantasia -  Animação
+408,M,29,S,Toledo,Terror -  Fantasia
+409,M,48,S,Sacramento,Fantasia -  Animação
+410,F,43,S,San Diego,Ação -  Policial
+411,M,18,N,Fort Lauderdale,Terror -  Fantasia
+412,M,40,S,Lyon,Ação -  Policial
+413,M,44,S,Hayward,Terror -  Fantasia
+414,M,25,N,San Jose,Drama -  Histórico
+415,F,26,N,Sacramento,Drama -  Histórico
+416,M,31,S,Oklahoma City,Fantasia -  Animação
+417,M,40,S,Chicago,Terror -  Fantasia
+418,M,24,N,Valetta,Ação -  Policial
+419,F,27,N,Huntsville,Terror -  Fantasia
+420,F,48,N,New Orleans,Fantasia -  Animação
+421,M,45,S,Orlando,Ação -  Policial
+422,F,53,S,Fayetteville,Drama -  Histórico
+423,F,26,N,Oakland,Fantasia -  Animação
+424,F,45,S,Orlando,Fantasia -  Animação
+425,F,55,S,Fayetteville,Drama -  Histórico
+426,F,38,S,Boston,Fantasia -  Animação
+427,M,39,S,Albuquerque,Ação -  Policial
+428,M,35,S,Oakland,Drama -  Histórico
+429,M,36,S,Henderson,Terror -  Fantasia
+430,F,28,S,Rochester,Drama -  Histórico
+431,F,36,S,Otawa,Terror -  Fantasia
+432,F,48,N,Fremont,Drama -  Histórico
+433,M,38,S,Albuquerque,Drama -  Histórico
+434,M,22,N,Hayward,Terror -  Fantasia
+435,M,23,N,Moreno Valley,Fantasia -  Animação
+436,M,38,S,Innsbruck,Terror -  Fantasia
+437,M,40,N,Moreno Valley,Terror -  Fantasia
+438,F,35,S,St. Louis,Ação -  Policial
+439,M,54,S,Hollywood,Terror -  Fantasia
+440,M,54,S,Colorado Springs,Ação -  Policial
+441,M,39,N,Escondido,Fantasia -  Animação
+442,M,47,S,Tulsa,Ação -  Policial
+443,F,46,N,Lisbon,Fantasia -  Animação
+444,M,38,S,Bellevue,Ação -  Policial
+445,F,27,N,Houston,Fantasia -  Animação
+446,M,23,N,Washington,Drama -  Histórico
+447,M,41,S,Bakersfield,Fantasia -  Animação
+448,M,54,N,Lisbon,Drama -  Histórico
+449,F,42,S,Orlando,Fantasia -  Animação
+450,F,46,N,Nashville,Terror -  Fantasia
+451,M,20,N,Nashville,Ação -  Policial
+452,F,48,N,Atlanta,Ação -  Policial
+453,M,33,S,Lincoln,Ação -  Policial
+454,M,53,N,Columbus,Ação -  Policial
+455,M,19,N,San Jose,Terror -  Fantasia
+456,F,50,S,Richmond,Drama -  Histórico
+457,M,24,N,Fremont,Fantasia -  Animação
+458,M,34,S,Rochester,Drama -  Histórico
+459,M,20,N,Scottsdale,Drama -  Histórico
+460,M,22,N,Boston,Fantasia -  Animação
+461,F,54,N,Bridgeport,Terror -  Fantasia
+462,M,47,N,Innsbruck,Fantasia -  Animação
+463,F,41,N,Fullerton,Terror -  Fantasia
+464,F,52,N,Madison,Fantasia -  Animação
+465,M,47,N,San Bernardino,Ação -  Policial
+466,F,44,S,Atlanta,Drama -  Histórico
+467,M,42,S,Santa Ana,Ação -  Policial
+468,M,52,S,Bucharest,Drama -  Histórico
+469,F,49,N,Dallas,Ação -  Policial
+470,M,45,S,Springfield,Terror -  Fantasia
+471,F,45,N,Houston,Fantasia -  Animação
+472,F,42,N,Laredo,Fantasia -  Animação
+473,F,46,N,Louisville,Drama -  Histórico
+474,M,25,N,Denver,Drama -  Histórico
+475,F,44,S,Jersey City,Terror -  Fantasia
+476,M,18,N,Charlotte,Drama -  Histórico
+477,M,21,N,Lincoln,Ação -  Policial
+478,F,40,N,New Orleans,Ação -  Policial
+479,F,30,S,Otawa,Terror -  Fantasia
+480,M,52,N,Moreno Valley,Ação -  Policial
+481,F,40,S,Stockton,Ação -  Policial
+482,F,52,N,Kansas City,Fantasia -  Animação
+483,F,26,N,Jersey City,Terror -  Fantasia
+484,M,54,N,Hayward,Fantasia -  Animação
+485,F,18,N,Lakewood,Fantasia -  Animação
+486,M,28,S,Kansas City,Ação -  Policial
+487,M,54,S,Worcester,Fantasia -  Animação
+488,F,38,N,Anaheim,Drama -  Histórico
+489,F,18,N,Springfield,Ação -  Policial
+490,F,55,S,Columbus,Ação -  Policial
+491,F,46,S,Lancaster,Ação -  Policial
+492,M,33,S,San Diego,Terror -  Fantasia
+493,M,29,S,Cincinnati,Ação -  Policial
+494,M,40,S,Colorado Springs,Terror -  Fantasia
+495,F,23,N,Fort Lauderdale,Terror -  Fantasia
+496,M,45,N,Tokyo,Drama -  Histórico
+497,M,29,S,Scottsdale,Fantasia -  Animação
+498,F,18,N,San Diego,Terror -  Fantasia
+499,M,25,N,Nashville,Terror -  Fantasia
+500,M,25,N,Memphis,Fantasia -  Animação
+501,F,41,S,New Orleans,Fantasia -  Animação
+502,F,24,N,Bakersfield,Ação -  Policial
+503,F,39,S,London,Drama -  Histórico
+504,F,42,S,Milwaukee,Terror -  Fantasia
+505,F,37,S,San Diego,Drama -  Histórico
+506,F,26,N,Denver,Fantasia -  Animação
+507,M,48,S,Ontario,Fantasia -  Animação
+508,M,50,N,Berlin,Ação -  Policial
+509,F,19,N,San Francisco,Ação -  Policial
+510,F,52,N,Chicago,Fantasia -  Animação
+511,F,47,S,Salt Lake City,Ação -  Policial
+512,M,25,N,Toledo,Fantasia -  Animação
+513,M,36,S,Atlanta,Terror -  Fantasia
+514,F,52,S,Glendale,Ação -  Policial
+515,F,53,S,Bakersfield,Fantasia -  Animação
+516,F,55,S,Berna,Terror -  Fantasia
+517,F,18,N,Bucharest,Ação -  Policial
+518,F,47,N,Denver,Ação -  Policial
+519,M,28,S,Saint Paul,Fantasia -  Animação
+520,F,26,N,Bridgeport,Fantasia -  Animação
+521,F,40,S,Huntsville,Fantasia -  Animação
+522,M,40,N,Laredo,Fantasia -  Animação
+523,F,21,N,Worcester,Terror -  Fantasia
+524,F,36,S,Tokyo,Fantasia -  Animação
+525,M,52,N,Hayward,Fantasia -  Animação
+526,F,34,S,Kansas City,Drama -  Histórico
+527,F,19,N,Miami,Drama -  Histórico
+528,M,39,S,Dallas,Drama -  Histórico
+529,F,51,S,Lyon,Terror -  Fantasia
+530,M,46,N,Boston,Ação -  Policial
+531,M,34,S,Long Beach,Terror -  Fantasia
+532,M,41,S,Milano,Terror -  Fantasia
+533,M,20,N,Salem,Drama -  Histórico
+534,F,26,N,Indianapolis,Drama -  Histórico
+535,M,20,N,Boston,Terror -  Fantasia
+536,M,40,S,Lyon,Fantasia -  Animação
+537,F,54,N,Portland,Fantasia -  Animação
+538,F,49,S,Boston,Fantasia -  Animação
+539,M,47,N,Memphis,Drama -  Histórico
+540,F,52,S,Los Angeles,Terror -  Fantasia
+541,M,54,N,Stockton,Fantasia -  Animação
+542,M,35,S,Irving,Terror -  Fantasia
+543,M,41,N,Arlington,Drama -  Histórico
+544,F,55,N,Amarillo,Fantasia -  Animação
+545,M,42,S,Atlanta,Terror -  Fantasia
+546,F,33,S,Murfreesboro,Drama -  Histórico
+547,M,30,S,Wien,Fantasia -  Animação
+548,M,37,S,El Paso,Fantasia -  Animação
+549,F,50,S,Phoenix,Drama -  Histórico
+550,F,22,N,Pittsburgh,Ação -  Policial
+551,M,45,N,Lincoln,Ação -  Policial
+552,F,28,S,Indianapolis,Terror -  Fantasia
+553,M,52,S,Fullerton,Drama -  Histórico
+554,M,50,S,Sacramento,Ação -  Policial
+555,M,36,S,Long Beach,Terror -  Fantasia
+556,F,33,S,Seattle,Fantasia -  Animação
+557,F,25,N,Rome,Terror -  Fantasia
+558,M,36,S,Long Beach,Fantasia -  Animação
+559,F,37,N,Albuquerque,Ação -  Policial
+560,M,44,S,Zurich,Drama -  Histórico
+561,M,18,N,Pittsburgh,Fantasia -  Animação
+562,F,24,N,Berna,Fantasia -  Animação
+563,M,28,S,New York,Ação -  Policial
+564,F,19,N,Denver,Fantasia -  Animação
+565,F,30,S,Denver,Fantasia -  Animação
+566,M,35,S,Lancaster,Terror -  Fantasia
+567,F,37,S,Philadelphia,Drama -  Histórico
+568,M,18,N,Wien,Fantasia -  Animação
+569,F,27,N,Anaheim,Terror -  Fantasia
+570,M,20,N,Ontario,Drama -  Histórico
+571,F,52,S,Anaheim,Ação -  Policial
+572,F,24,N,Colorado Springs,Drama -  Histórico
+573,F,42,N,Honolulu,Terror -  Fantasia
+574,M,32,S,Philadelphia,Ação -  Policial
+575,F,43,S,New Orleans,Fantasia -  Animação
+576,M,49,S,Memphis,Fantasia -  Animação
+577,M,33,S,Berlin,Terror -  Fantasia
+578,M,38,N,Fremont,Drama -  Histórico
+579,F,32,S,Tulsa,Drama -  Histórico
+580,F,37,S,Garland,Terror -  Fantasia
+581,F,35,S,Fort Lauderdale,Drama -  Histórico
+582,F,43,N,Omaha,Ação -  Policial
+583,M,19,N,Fullerton,Fantasia -  Animação
+584,F,24,N,Long Beach,Terror -  Fantasia
+585,M,35,S,Richmond,Ação -  Policial
+586,F,51,S,New York,Terror -  Fantasia
+587,M,36,S,New Orleans,Ação -  Policial
+588,F,50,N,Omaha,Fantasia -  Animação
+589,M,40,S,Bakersfield,Terror -  Fantasia
+590,M,42,S,Detroit,Fantasia -  Animação
+591,F,18,N,Milano,Fantasia -  Animação
+592,M,35,S,Atlanta,Fantasia -  Animação
+593,F,53,N,Bucharest,Terror -  Fantasia
+594,F,54,S,New York,Ação -  Policial
+595,M,47,S,Tokyo,Ação -  Policial
+596,F,29,S,Phoenix,Terror -  Fantasia
+597,F,19,N,Jacksonville,Fantasia -  Animação
+598,F,30,S,Stockton,Terror -  Fantasia
+599,F,21,N,Baltimore,Drama -  Histórico
+600,M,41,N,El Paso,Fantasia -  Animação
+601,F,26,N,Bridgeport,Drama -  Histórico
+602,M,35,S,Quebec,Ação -  Policial
+603,M,43,S,Arlington,Terror -  Fantasia
+604,M,47,N,Saint Paul,Drama -  Histórico
+605,M,30,S,Wien,Drama -  Histórico
+606,M,28,S,Tallahassee,Terror -  Fantasia
+607,F,23,N,Tulsa,Terror -  Fantasia
+608,M,33,S,Toledo,Fantasia -  Animação
+609,M,24,N,Henderson,Ação -  Policial
+610,F,28,S,Ontario,Fantasia -  Animação
+611,M,29,S,Orlando,Drama -  Histórico
+612,F,33,S,Honolulu,Terror -  Fantasia
+613,M,27,N,Colorado Springs,Terror -  Fantasia
+614,M,26,N,Huntsville,Ação -  Policial
+615,M,47,N,Albuquerque,Ação -  Policial
+616,F,18,N,Henderson,Fantasia -  Animação
+617,F,23,N,Chicago,Fantasia -  Animação
+618,F,46,N,Omaha,Fantasia -  Animação
+619,M,42,S,Bucharest,Ação -  Policial
+620,F,49,S,Jersey City,Drama -  Histórico
+621,F,53,N,Fayetteville,Terror -  Fantasia
+622,M,21,N,St. Louis,Ação -  Policial
+623,F,35,S,Fullerton,Fantasia -  Animação
+624,F,48,S,Colorado Springs,Terror -  Fantasia
+625,M,38,N,Saint Paul,Terror -  Fantasia
+626,M,20,N,Henderson,Ação -  Policial
+627,F,50,S,Colorado Springs,Terror -  Fantasia
+628,M,41,N,Hollywood,Fantasia -  Animação
+629,M,46,N,Portland,Fantasia -  Animação
+630,M,39,S,San Bernardino,Terror -  Fantasia
+631,F,30,S,Milano,Terror -  Fantasia
+632,F,19,N,Santa Ana,Drama -  Histórico
+633,M,42,N,Portland,Terror -  Fantasia
+634,F,24,N,Sacramento,Drama -  Histórico
+635,F,38,S,Bridgeport,Terror -  Fantasia
+636,M,50,N,Fort Lauderdale,Terror -  Fantasia
+637,M,55,N,St. Louis,Fantasia -  Animação
+638,F,51,S,Seattle,Drama -  Histórico
+639,F,48,N,Arlington,Drama -  Histórico
+640,M,30,S,Lakewood,Fantasia -  Animação
+641,F,38,N,Zurich,Drama -  Histórico
+642,F,41,S,Miami,Drama -  Histórico
+643,F,38,N,Berna,Fantasia -  Animação
+644,F,42,S,Lisbon,Ação -  Policial
+645,F,35,S,Madrid,Terror -  Fantasia
+646,F,32,S,Saint Paul,Ação -  Policial
+647,M,50,N,Reno,Terror -  Fantasia
+648,F,35,S,Fayetteville,Ação -  Policial
+649,M,24,N,Pittsburgh,Ação -  Policial
+650,M,52,N,Charlotte,Fantasia -  Animação
+651,M,39,S,Kansas City,Fantasia -  Animação
+652,F,44,N,Kansas City,Drama -  Histórico
+653,F,46,S,Stockton,Drama -  Histórico
+654,F,53,N,San Diego,Ação -  Policial
+655,M,55,N,Hayward,Drama -  Histórico
+656,F,52,S,Minneapolis,Ação -  Policial
+657,F,43,S,Tokyo,Drama -  Histórico
+658,M,46,S,Milano,Drama -  Histórico
+659,F,53,N,Quebec,Drama -  Histórico
+660,F,42,N,Huntsville,Drama -  Histórico
+661,M,43,S,Milano,Terror -  Fantasia
+662,F,45,N,Omaha,Drama -  Histórico
+663,M,26,N,Arlington,Terror -  Fantasia
+664,M,19,N,Tallahassee,Ação -  Policial
+665,M,46,N,Scottsdale,Ação -  Policial
+666,F,31,S,Irving,Terror -  Fantasia
+667,M,43,N,Wien,Ação -  Policial
+668,F,50,S,Stockton,Terror -  Fantasia
+669,M,44,S,Tallahassee,Terror -  Fantasia
+670,M,39,N,Toledo,Drama -  Histórico
+671,F,39,N,Hayward,Ação -  Policial
+672,F,41,S,Stockton,Drama -  Histórico
+673,M,43,N,St. Louis,Drama -  Histórico
+674,F,53,S,Stockton,Ação -  Policial
+675,M,32,S,Honolulu,Fantasia -  Animação
+676,F,52,N,Lancaster,Fantasia -  Animação
+677,M,52,S,Philadelphia,Terror -  Fantasia
+678,F,28,S,Amarillo,Drama -  Histórico
+679,F,38,S,Madrid,Terror -  Fantasia
+680,F,43,S,Bucharest,Terror -  Fantasia
+681,F,50,N,Louisville,Fantasia -  Animação
+682,M,19,N,Reno,Fantasia -  Animação
+683,F,44,N,Garland,Terror -  Fantasia
+684,M,52,S,New York,Fantasia -  Animação
+685,M,49,N,Bridgeport,Ação -  Policial
+686,M,26,N,Garland,Fantasia -  Animação
+687,F,39,S,Phoenix,Drama -  Histórico
+688,F,44,S,Tallahassee,Ação -  Policial
+689,F,45,N,Detroit,Drama -  Histórico
+690,M,45,N,St. Louis,Ação -  Policial
+691,F,23,N,Toledo,Fantasia -  Animação
+692,F,55,S,Hayward,Ação -  Policial
+693,F,28,S,San Francisco,Drama -  Histórico
+694,M,36,S,Long Beach,Ação -  Policial
+695,M,54,N,Madrid,Ação -  Policial
+696,F,37,N,Santa Ana,Drama -  Histórico
+697,F,37,S,Paris,Fantasia -  Animação
+698,F,49,N,Bellevue,Fantasia -  Animação
+699,F,27,N,Berna,Ação -  Policial
+700,F,39,S,Cincinnati,Drama -  Histórico
+701,M,45,S,Rome,Drama -  Histórico
+702,F,38,S,Saint Paul,Terror -  Fantasia
+703,M,26,N,Santa Ana,Terror -  Fantasia
+704,F,44,S,Columbus,Fantasia -  Animação
+705,F,27,N,Bakersfield,Fantasia -  Animação
+706,M,44,N,Toledo,Terror -  Fantasia
+707,M,54,S,Honolulu,Terror -  Fantasia
+708,M,29,S,Bucharest,Drama -  Histórico
+709,F,48,S,Sacramento,Ação -  Policial
+710,M,19,N,Kansas City,Terror -  Fantasia
+711,M,32,S,Chicago,Terror -  Fantasia
+712,F,20,N,Salt Lake City,Ação -  Policial
+713,F,55,N,Bakersfield,Fantasia -  Animação
+714,F,30,S,Lyon,Drama -  Histórico
+715,M,29,S,Murfreesboro,Fantasia -  Animação
+716,F,42,S,Jacksonville,Terror -  Fantasia
+717,M,36,S,Arlington,Fantasia -  Animação
+718,M,21,N,San Francisco,Fantasia -  Animação
+719,F,49,N,Anaheim,Drama -  Histórico
+720,F,52,S,Garland,Drama -  Histórico
+721,M,42,S,Hollywood,Terror -  Fantasia
+722,F,50,N,Santa Ana,Drama -  Histórico
+723,F,23,N,Tallahassee,Terror -  Fantasia
+724,M,47,S,Norfolk,Terror -  Fantasia
+725,F,52,N,Bucharest,Drama -  Histórico
+726,F,40,N,Quebec,Terror -  Fantasia
+727,M,23,N,Moreno Valley,Terror -  Fantasia
+728,M,29,S,Las Vegas,Drama -  Histórico
+729,M,53,S,Los Angeles,Ação -  Policial
+730,M,52,S,Salt Lake City,Ação -  Policial
+731,M,44,S,Indianapolis,Drama -  Histórico
+732,M,34,S,Otawa,Drama -  Histórico
+733,F,32,S,Atlanta,Terror -  Fantasia
+734,M,54,S,Irving,Terror -  Fantasia
+735,F,32,S,Orlando,Fantasia -  Animação
+736,F,48,S,Hayward,Drama -  Histórico
+737,M,29,S,Huntsville,Terror -  Fantasia
+738,F,51,N,Otawa,Ação -  Policial
+739,F,50,N,Baltimore,Drama -  Histórico
+740,F,53,N,Omaha,Ação -  Policial
+741,F,48,S,San Jose,Terror -  Fantasia
+742,F,23,N,Phoenix,Fantasia -  Animação
+743,M,32,S,Lancaster,Drama -  Histórico
+744,F,26,N,Dallas,Ação -  Policial
+745,F,46,S,Hayward,Drama -  Histórico
+746,M,45,S,Hollywood,Drama -  Histórico
+747,F,54,S,Reno,Terror -  Fantasia
+748,M,36,S,Minneapolis,Fantasia -  Animação
+749,M,33,S,San Antonio,Terror -  Fantasia
+750,F,19,N,Lancaster,Drama -  Histórico
+751,M,51,S,Murfreesboro,Terror -  Fantasia
+752,M,36,S,Portland,Fantasia -  Animação
+753,M,27,N,Tulsa,Ação -  Policial
+754,F,33,S,Richmond,Terror -  Fantasia
+755,F,36,S,Los Angeles,Ação -  Policial
+756,M,30,S,Prague,Drama -  Histórico
+757,F,33,S,Washington,Terror -  Fantasia
+758,M,48,N,Hayward,Ação -  Policial
+759,M,54,N,Columbus,Ação -  Policial
+760,M,34,S,Bakersfield,Ação -  Policial
+761,F,47,N,Long Beach,Fantasia -  Animação
+762,M,35,S,Charlotte,Ação -  Policial
+763,M,40,N,Arlington,Fantasia -  Animação
+764,F,19,N,San Diego,Drama -  Histórico
+765,M,44,S,Jacksonville,Drama -  Histórico
+766,M,42,S,Santa Ana,Terror -  Fantasia
+767,F,18,N,Columbus,Drama -  Histórico
+768,M,34,S,Indianapolis,Drama -  Histórico
+769,F,34,S,San Diego,Fantasia -  Animação
+770,M,22,N,Oakland,Fantasia -  Animação
+771,M,53,N,Detroit,Ação -  Policial
+772,M,18,N,Worcester,Terror -  Fantasia
+773,F,44,N,San Diego,Drama -  Histórico
+774,M,20,N,Lincoln,Ação -  Policial
+775,F,28,S,Honolulu,Ação -  Policial
+776,F,42,S,Nashville,Terror -  Fantasia
+777,F,28,S,Laredo,Fantasia -  Animação
+778,M,55,N,Dallas,Drama -  Histórico
+779,F,30,S,Richmond,Fantasia -  Animação
+780,M,44,S,Lyon,Terror -  Fantasia
+781,M,54,S,Garland,Ação -  Policial
+782,F,48,N,Louisville,Fantasia -  Animação
+783,F,36,S,Bellevue,Terror -  Fantasia
+784,M,18,N,Henderson,Drama -  Histórico
+785,F,23,N,Scottsdale,Drama -  Histórico
+786,M,33,S,Lancaster,Fantasia -  Animação
+787,M,48,N,Denver,Terror -  Fantasia
+788,M,47,N,Zurich,Terror -  Fantasia
+789,M,18,N,Huntsville,Fantasia -  Animação
+790,F,32,S,Reno,Fantasia -  Animação
+791,F,22,N,Milano,Terror -  Fantasia
+792,M,55,S,Stockton,Terror -  Fantasia
+793,F,41,N,Bakersfield,Fantasia -  Animação
+794,F,44,S,Oakland,Fantasia -  Animação
+795,M,39,S,Innsbruck,Drama -  Histórico
+796,F,26,N,Madison,Terror -  Fantasia
+797,M,31,S,Louisville,Terror -  Fantasia
+798,F,24,N,Lincoln,Ação -  Policial
+799,F,43,N,Philadelphia,Ação -  Policial
+800,F,50,S,Milwaukee,Fantasia -  Animação
+801,F,55,S,London,Drama -  Histórico
+802,M,27,N,Tallahassee,Fantasia -  Animação
+803,F,36,S,Santa Ana,Terror -  Fantasia
+804,F,48,N,Bakersfield,Drama -  Histórico
+805,F,52,N,Jacksonville,Drama -  Histórico
+806,M,44,S,Venice,Ação -  Policial
+807,F,51,S,Arlington,Ação -  Policial
+808,M,29,S,Milano,Terror -  Fantasia
+809,F,43,S,Memphis,Fantasia -  Animação
+810,F,46,N,Springfield,Drama -  Histórico
+811,M,42,N,Omaha,Fantasia -  Animação
+812,F,52,N,Pittsburgh,Ação -  Policial
+813,F,24,N,Sacramento,Ação -  Policial
+814,F,35,S,Saint Paul,Fantasia -  Animação
+815,F,19,N,San Antonio,Drama -  Histórico
+816,F,28,S,Charlotte,Drama -  Histórico
+817,F,54,N,Houston,Fantasia -  Animação
+818,F,31,S,Denver,Terror -  Fantasia
+819,F,38,S,Las Vegas,Terror -  Fantasia
+820,M,46,S,Bellevue,Drama -  Histórico
+821,M,50,N,Dallas,Terror -  Fantasia
+822,M,39,N,Memphis,Terror -  Fantasia
+823,F,48,N,Oklahoma City,Ação -  Policial
+824,F,45,S,Glendale,Fantasia -  Animação
+825,M,29,S,Albuquerque,Fantasia -  Animação
+826,F,24,N,Cincinnati,Fantasia -  Animação
+827,F,49,N,Madison,Ação -  Policial
+828,F,32,S,San Bernardino,Ação -  Policial
+829,M,37,N,Hayward,Terror -  Fantasia
+830,M,32,S,Louisville,Fantasia -  Animação
+831,F,44,S,New York,Terror -  Fantasia
+832,F,19,N,Stockton,Drama -  Histórico
+833,F,24,N,Jacksonville,Ação -  Policial
+834,F,31,S,Stockton,Terror -  Fantasia
+835,F,21,N,Fremont,Drama -  Histórico
+836,F,23,N,Lyon,Ação -  Policial
+837,M,24,N,Anaheim,Ação -  Policial
+838,F,28,S,Wien,Terror -  Fantasia
+839,M,49,S,Zurich,Ação -  Policial
+840,F,51,N,Dallas,Fantasia -  Animação
+841,F,26,N,Minneapolis,Fantasia -  Animação
+842,M,52,N,Sacramento,Drama -  Histórico
+843,M,35,S,Toledo,Ação -  Policial
+844,F,54,N,Atlanta,Drama -  Histórico
+845,M,23,N,Richmond,Terror -  Fantasia
+846,F,39,N,San Antonio,Terror -  Fantasia
+847,M,36,S,Miami,Terror -  Fantasia
+848,F,22,N,Oklahoma City,Drama -  Histórico
+849,F,41,N,New York,Fantasia -  Animação
+850,F,20,N,Nashville,Fantasia -  Animação
+851,M,38,S,Reno,Fantasia -  Animação
+852,F,25,N,Arlington,Ação -  Policial
+853,M,21,N,Toledo,Fantasia -  Animação
+854,M,27,N,Otawa,Drama -  Histórico
+855,M,53,S,San Jose,Terror -  Fantasia
+856,M,38,N,Stockton,Fantasia -  Animação
+857,M,44,N,Jacksonville,Ação -  Policial
+858,M,54,S,Fullerton,Drama -  Histórico
+859,M,44,S,El Paso,Terror -  Fantasia
+860,F,36,S,Tokyo,Terror -  Fantasia
+861,F,38,N,Madison,Terror -  Fantasia
+862,F,23,N,Louisville,Drama -  Histórico
+863,M,44,N,Phoenix,Fantasia -  Animação
+864,M,21,N,Detroit,Drama -  Histórico
+865,M,51,N,Rome,Ação -  Policial
+866,F,28,S,Berna,Terror -  Fantasia
+867,F,41,N,Berlin,Ação -  Policial
+868,M,34,S,Tulsa,Drama -  Histórico
+869,F,22,N,Fullerton,Fantasia -  Animação
+870,M,18,N,Santa Ana,Drama -  Histórico
+871,M,41,S,Garland,Fantasia -  Animação
+872,F,19,N,Oakland,Ação -  Policial
+873,F,50,S,Santa Ana,Ação -  Policial
+874,F,44,N,Long Beach,Drama -  Histórico
+875,M,35,S,Hayward,Fantasia -  Animação
+876,M,52,S,Hollywood,Drama -  Histórico
+877,M,27,N,Laredo,Fantasia -  Animação
+878,F,35,S,Lyon,Drama -  Histórico
+879,F,47,S,Phoenix,Fantasia -  Animação
+880,F,20,N,Valetta,Fantasia -  Animação
+881,M,48,S,Tallahassee,Terror -  Fantasia
+882,F,29,S,Las Vegas,Fantasia -  Animação
+883,F,40,S,Venice,Fantasia -  Animação
+884,F,25,N,Oklahoma City,Terror -  Fantasia
+885,M,31,S,Oakland,Fantasia -  Animação
+886,M,40,N,Fremont,Drama -  Histórico
+887,M,26,N,Milwaukee,Terror -  Fantasia
+888,F,45,S,Fayetteville,Terror -  Fantasia
+889,M,20,N,Reno,Terror -  Fantasia
+890,F,34,S,Oklahoma City,Terror -  Fantasia
+891,M,30,S,Innsbruck,Drama -  Histórico
+892,M,37,S,Sacramento,Ação -  Policial
+893,M,30,S,Laredo,Fantasia -  Animação
+894,F,52,S,Nashville,Drama -  Histórico
+895,F,34,S,Laredo,Terror -  Fantasia
+896,F,36,S,Huntsville,Ação -  Policial
+897,M,29,S,Hollywood,Fantasia -  Animação
+898,M,51,N,Jersey City,Ação -  Policial
+899,M,48,N,Las Vegas,Ação -  Policial
+900,F,40,S,Oakland,Drama -  Histórico
+901,M,28,S,Honolulu,Terror -  Fantasia
+902,M,53,N,Berlin,Ação -  Policial
+903,F,50,S,Tulsa,Drama -  Histórico
+904,F,45,N,Salt Lake City,Fantasia -  Animação
+905,M,46,N,Lyon,Terror -  Fantasia
+906,F,28,S,Quebec,Terror -  Fantasia
+907,M,41,S,Chicago,Drama -  Histórico
+908,M,24,N,Houston,Ação -  Policial
+909,F,49,S,El Paso,Terror -  Fantasia
+910,M,40,S,Louisville,Terror -  Fantasia
+911,F,18,N,Venice,Fantasia -  Animação
+912,M,33,S,Houston,Fantasia -  Animação
+913,M,54,N,Tallahassee,Fantasia -  Animação
+914,F,31,S,Madison,Terror -  Fantasia
+915,F,19,N,Jacksonville,Drama -  Histórico
+916,F,38,N,Atlanta,Terror -  Fantasia
+917,F,33,S,Orlando,Terror -  Fantasia
+918,M,43,N,Laredo,Terror -  Fantasia
+919,F,47,N,Fort Lauderdale,Ação -  Policial
+920,M,51,N,New York,Ação -  Policial
+921,M,43,S,Louisville,Ação -  Policial
+922,M,36,S,Detroit,Ação -  Policial
+923,M,25,N,Portland,Drama -  Histórico
+924,F,35,S,Miami,Drama -  Histórico
+925,F,26,N,San Diego,Terror -  Fantasia
+926,F,33,S,Fremont,Ação -  Policial
+927,F,33,S,Rome,Ação -  Policial
+928,F,25,N,Chicago,Drama -  Histórico
+929,M,28,S,Richmond,Drama -  Histórico
+930,M,49,S,Honolulu,Terror -  Fantasia
+931,M,47,N,Bucharest,Fantasia -  Animação
+932,M,26,N,Huntsville,Ação -  Policial
+933,F,52,N,Tokyo,Terror -  Fantasia
+934,F,49,N,Norfolk,Ação -  Policial
+935,M,40,S,Murfreesboro,Terror -  Fantasia
+936,M,31,S,San Francisco,Drama -  Histórico
+937,F,47,S,Springfield,Fantasia -  Animação
+938,M,51,S,Glendale,Ação -  Policial
+939,F,53,S,Milano,Fantasia -  Animação
+940,M,49,S,Otawa,Fantasia -  Animação
+941,M,28,S,Richmond,Drama -  Histórico
+942,F,48,S,Tallahassee,Drama -  Histórico
+943,M,36,S,Rochester,Drama -  Histórico
+944,F,36,S,Garland,Ação -  Policial
+945,F,29,S,Omaha,Ação -  Policial
+946,F,45,N,Chicago,Fantasia -  Animação
+947,F,31,S,London,Fantasia -  Animação
+948,M,47,S,Otawa,Fantasia -  Animação
+949,M,35,S,Tulsa,Fantasia -  Animação
+950,F,45,S,Irving,Drama -  Histórico
+951,M,28,S,Orlando,Ação -  Policial
+952,M,32,S,Hayward,Fantasia -  Animação
+953,F,50,N,Salt Lake City,Drama -  Histórico
+954,F,42,S,Fayetteville,Drama -  Histórico
+955,F,49,N,Garland,Ação -  Policial
+956,M,27,N,Lincoln,Ação -  Policial
+957,M,55,S,Ontario,Fantasia -  Animação
+958,M,18,N,Bakersfield,Terror -  Fantasia
+959,F,39,S,San Diego,Drama -  Histórico
+960,F,55,N,London,Ação -  Policial
+961,F,52,N,Chicago,Fantasia -  Animação
+962,M,40,N,Quebec,Terror -  Fantasia
+963,M,44,N,Columbus,Terror -  Fantasia
+964,F,22,N,Hollywood,Fantasia -  Animação
+965,M,24,N,Louisville,Drama -  Histórico
+966,M,48,S,Lisbon,Ação -  Policial
+967,M,45,N,Cincinnati,Ação -  Policial
+968,F,55,N,St. Louis,Ação -  Policial
+969,F,32,S,Fullerton,Ação -  Policial
+970,M,36,S,Valetta,Drama -  Histórico
+971,M,46,N,Ontario,Drama -  Histórico
+972,M,30,S,Fremont,Drama -  Histórico
+973,F,19,N,Phoenix,Fantasia -  Animação
+974,M,50,S,Berna,Drama -  Histórico
+975,F,41,N,Prague,Terror -  Fantasia
+976,F,45,S,Fort Lauderdale,Ação -  Policial
+977,M,19,N,Bridgeport,Terror -  Fantasia
+978,F,24,N,New Orleans,Fantasia -  Animação
+979,M,52,S,El Paso,Fantasia -  Animação
+980,F,50,N,Fayetteville,Drama -  Histórico
+981,F,35,S,Memphis,Ação -  Policial
+982,F,30,S,Portland,Ação -  Policial
+983,F,39,N,Huntsville,Terror -  Fantasia
+984,F,31,S,Milano,Ação -  Policial
+985,F,46,N,Springfield,Drama -  Histórico
+986,M,40,N,Paris,Fantasia -  Animação
+987,F,45,N,Hayward,Fantasia -  Animação
+988,F,23,N,Las Vegas,Ação -  Policial
+989,M,35,S,Phoenix,Drama -  Histórico
+990,M,32,S,Orlando,Drama -  Histórico
+991,M,18,N,Escondido,Ação -  Policial
+992,F,42,N,Long Beach,Ação -  Policial
+993,F,21,N,Tallahassee,Terror -  Fantasia
+994,F,30,S,Salt Lake City,Drama -  Histórico
+995,F,33,S,Albuquerque,Ação -  Policial
+996,M,44,S,Richmond,Ação -  Policial
+997,F,55,S,Phoenix,Fantasia -  Animação
+998,F,19,N,Kansas City,Terror -  Fantasia
+999,F,29,S,Lakewood,Terror -  Fantasia
+1000,M,24,N,New Orleans,Drama -  Histórico
+1001,F,54,N,Houston,Fantasia -  Animação
+1002,F,37,N,Ontario,Ação -  Policial
+1003,F,30,S,Prague,Ação -  Policial
+1004,F,24,N,Denver,Drama -  Histórico
+1005,F,34,S,Saint Paul,Ação -  Policial
+1006,F,39,S,Glendale,Terror -  Fantasia
+1007,F,54,N,Fort Lauderdale,Fantasia -  Animação
+1008,M,53,N,Irving,Fantasia -  Animação
+1009,M,31,S,Long Beach,Fantasia -  Animação
+1010,F,42,N,Richmond,Ação -  Policial
+1011,F,32,S,Valetta,Terror -  Fantasia
+1012,F,55,S,Tulsa,Ação -  Policial
+1013,F,51,N,Boston,Ação -  Policial
+1014,F,38,S,Milano,Ação -  Policial
+1015,F,19,N,Henderson,Ação -  Policial
+1016,F,46,S,Bridgeport,Fantasia -  Animação
+1017,F,22,N,Fayetteville,Ação -  Policial
+1018,F,54,N,Salt Lake City,Drama -  Histórico
+1019,F,26,N,Omaha,Fantasia -  Animação
+1020,F,31,S,Salem,Fantasia -  Animação
+1021,M,34,S,Kansas City,Ação -  Policial
+1022,F,24,N,Moreno Valley,Ação -  Policial
+1023,F,42,S,Fremont,Drama -  Histórico
+1024,M,23,N,Milano,Fantasia -  Animação
+1025,M,51,S,Stockton,Fantasia -  Animação
+1026,M,33,S,Moreno Valley,Drama -  Histórico
+1027,M,41,S,Zurich,Terror -  Fantasia
+1028,F,54,N,Worcester,Terror -  Fantasia
+1029,F,51,N,Albuquerque,Fantasia -  Animação
+1030,F,18,N,Saint Paul,Fantasia -  Animação
+1031,F,55,N,Orlando,Ação -  Policial
+1032,M,48,S,Berna,Fantasia -  Animação
+1033,F,26,N,Sacramento,Terror -  Fantasia
+1034,M,30,S,Zurich,Drama -  Histórico
+1035,F,33,S,Nashville,Ação -  Policial
+1036,F,49,S,Laredo,Terror -  Fantasia
+1037,F,35,S,Toledo,Terror -  Fantasia
+1038,F,20,N,Santa Ana,Fantasia -  Animação
+1039,M,41,S,Honolulu,Drama -  Histórico
+1040,F,37,N,Scottsdale,Ação -  Policial
+1041,F,24,N,Lincoln,Ação -  Policial
+1042,M,40,N,Richmond,Terror -  Fantasia
+1043,M,46,N,Dallas,Drama -  Histórico
+1044,M,31,S,Murfreesboro,Ação -  Policial
+1045,M,18,N,Wien,Drama -  Histórico
+1046,F,44,S,Prague,Drama -  Histórico
+1047,F,49,S,Stockton,Fantasia -  Animação
+1048,M,33,S,Santa Ana,Ação -  Policial
+1049,M,23,N,Norfolk,Ação -  Policial
+1050,M,48,N,Worcester,Drama -  Histórico
+1051,M,32,S,Toledo,Terror -  Fantasia
+1052,M,55,S,Omaha,Terror -  Fantasia
+1053,F,46,S,Dallas,Terror -  Fantasia
+1054,F,39,S,Bridgeport,Terror -  Fantasia
+1055,M,44,N,Long Beach,Drama -  Histórico
+1056,F,33,S,Quebec,Drama -  Histórico
+1057,F,28,S,Miami,Fantasia -  Animação
+1058,M,33,S,Jersey City,Fantasia -  Animação
+1059,F,30,S,Lisbon,Drama -  Histórico
+1060,M,23,N,Detroit,Fantasia -  Animação
+1061,M,18,N,Chicago,Drama -  Histórico
+1062,F,19,N,San Diego,Ação -  Policial
+1063,M,37,N,Berna,Fantasia -  Animação
+1064,F,52,N,Los Angeles,Drama -  Histórico
+1065,M,31,S,Otawa,Terror -  Fantasia
+1066,F,33,S,Fullerton,Ação -  Policial
+1067,F,48,S,Honolulu,Terror -  Fantasia
+1068,M,36,S,San Bernardino,Terror -  Fantasia
+1069,F,38,N,Laredo,Ação -  Policial
+1070,M,31,S,Venice,Terror -  Fantasia
+1071,F,46,S,San Diego,Ação -  Policial
+1072,M,29,S,Tallahassee,Drama -  Histórico
+1073,M,26,N,Albuquerque,Ação -  Policial
+1074,F,37,N,Norfolk,Fantasia -  Animação
+1075,F,25,N,Laredo,Ação -  Policial
+1076,M,23,N,Lincoln,Terror -  Fantasia
+1077,M,28,S,Stockton,Drama -  Histórico
+1078,F,41,N,Salt Lake City,Drama -  Histórico
+1079,M,33,S,Springfield,Ação -  Policial
+1080,F,30,S,London,Ação -  Policial
+1081,F,18,N,Fremont,Drama -  Histórico
+1082,F,46,N,San Diego,Fantasia -  Animação
+1083,M,44,S,Columbus,Fantasia -  Animação
+1084,M,31,S,Bridgeport,Terror -  Fantasia
+1085,M,38,N,Oklahoma City,Ação -  Policial
+1086,M,44,S,New York,Fantasia -  Animação
+1087,F,46,N,San Antonio,Terror -  Fantasia
+1088,F,38,S,Quebec,Terror -  Fantasia
+1089,M,27,N,Lyon,Fantasia -  Animação
+1090,M,53,S,St. Louis,Ação -  Policial
+1091,F,31,S,Cincinnati,Ação -  Policial
+1092,F,47,N,Glendale,Fantasia -  Animação
+1093,M,29,S,Jacksonville,Fantasia -  Animação
+1094,F,52,S,Lincoln,Terror -  Fantasia
+1095,F,31,S,Bakersfield,Drama -  Histórico
+1096,F,27,N,Atlanta,Drama -  Histórico
+1097,F,52,N,Oakland,Ação -  Policial
+1098,M,45,S,New York,Fantasia -  Animação
+1099,F,36,S,Portland,Fantasia -  Animação
+1100,F,37,N,Salt Lake City,Ação -  Policial
+1101,F,32,S,Detroit,Ação -  Policial
+1102,M,49,S,Memphis,Terror -  Fantasia
+1103,F,24,N,Anaheim,Ação -  Policial
+1104,M,42,N,Lisbon,Terror -  Fantasia
+1105,M,22,N,Lyon,Ação -  Policial
+1106,F,51,N,San Antonio,Fantasia -  Animação
+1107,M,53,S,Zurich,Terror -  Fantasia
+1108,M,22,N,Sacramento,Ação -  Policial
+1109,M,41,N,Madison,Drama -  Histórico
+1110,F,40,S,Tallahassee,Ação -  Policial
+1111,F,52,S,Honolulu,Terror -  Fantasia
+1112,M,54,N,Minneapolis,Terror -  Fantasia
+1113,F,38,N,Hayward,Terror -  Fantasia
+1114,M,46,N,Dallas,Ação -  Policial
+1115,M,26,N,Albuquerque,Ação -  Policial
+1116,F,53,S,Huntsville,Terror -  Fantasia
+1117,M,23,N,Venice,Ação -  Policial
+1118,F,42,S,Baltimore,Drama -  Histórico
+1119,M,55,N,Salem,Ação -  Policial
+1120,M,44,N,Baltimore,Drama -  Histórico
+1121,F,55,S,Richmond,Fantasia -  Animação
+1122,M,23,N,El Paso,Ação -  Policial
+1123,F,46,S,Glendale,Drama -  Histórico
+1124,M,54,N,Lakewood,Ação -  Policial
+1125,F,48,S,Salem,Drama -  Histórico
+1126,M,31,S,Cincinnati,Terror -  Fantasia
+1127,F,35,S,Oklahoma City,Ação -  Policial
+1128,F,52,N,Bellevue,Ação -  Policial
+1129,M,41,S,El Paso,Drama -  Histórico
+1130,M,36,S,Phoenix,Ação -  Policial
+1131,M,51,N,Zurich,Terror -  Fantasia
+1132,M,41,N,Boston,Fantasia -  Animação
+1133,M,19,N,Escondido,Ação -  Policial
+1134,F,45,S,Washington,Fantasia -  Animação
+1135,F,33,S,Rome,Drama -  Histórico
+1136,M,34,S,Seattle,Ação -  Policial
+1137,F,50,N,Amarillo,Ação -  Policial
+1138,F,53,N,Scottsdale,Drama -  Histórico
+1139,M,38,N,Dallas,Ação -  Policial
+1140,M,51,N,Otawa,Ação -  Policial
+1141,F,54,N,San Diego,Ação -  Policial
+1142,M,34,S,Richmond,Drama -  Histórico
+1143,F,43,S,New Orleans,Drama -  Histórico
+1144,F,33,S,Prague,Ação -  Policial
+1145,M,40,N,Louisville,Terror -  Fantasia
+1146,M,43,S,Madrid,Drama -  Histórico
+1147,F,51,N,Lisbon,Drama -  Histórico
+1148,F,46,N,Henderson,Terror -  Fantasia
+1149,F,33,S,Glendale,Drama -  Histórico
+1150,M,35,S,Laredo,Fantasia -  Animação
+1151,M,32,S,San Diego,Ação -  Policial
+1152,M,48,S,New York,Ação -  Policial
+1153,F,44,S,Irving,Fantasia -  Animação
+1154,M,43,N,Milwaukee,Fantasia -  Animação
+1155,M,34,S,Venice,Drama -  Histórico
+1156,F,18,N,Las Vegas,Drama -  Histórico
+1157,F,43,S,Louisville,Terror -  Fantasia
+1158,F,45,S,Moreno Valley,Fantasia -  Animação
+1159,F,43,N,Baltimore,Drama -  Histórico
+1160,M,36,S,Garland,Terror -  Fantasia
+1161,M,48,S,Garland,Drama -  Histórico
+1162,F,32,S,Paris,Fantasia -  Animação
+1163,F,39,S,Colorado Springs,Fantasia -  Animação
+1164,M,48,S,Baltimore,Drama -  Histórico
+1165,M,46,N,Huntsville,Drama -  Histórico
+1166,M,28,S,Pittsburgh,Terror -  Fantasia
+1167,F,55,N,Wien,Ação -  Policial
+1168,M,42,N,Milano,Ação -  Policial
+1169,F,29,S,Salt Lake City,Terror -  Fantasia
+1170,M,48,S,Detroit,Fantasia -  Animação
+1171,M,49,S,Hollywood,Fantasia -  Animação
+1172,F,18,N,San Francisco,Terror -  Fantasia
+1173,F,51,S,Bellevue,Fantasia -  Animação
+1174,M,39,S,Rome,Terror -  Fantasia
+1175,F,24,N,Innsbruck,Ação -  Policial
+1176,F,30,S,Quebec,Ação -  Policial
+1177,F,37,N,Minneapolis,Terror -  Fantasia
+1178,F,48,S,Bakersfield,Terror -  Fantasia
+1179,F,47,S,Orlando,Fantasia -  Animação
+1180,M,49,S,Detroit,Ação -  Policial
+1181,F,29,S,Oakland,Terror -  Fantasia
+1182,F,51,S,Madrid,Drama -  Histórico
+1183,F,19,N,Washington,Terror -  Fantasia
+1184,F,47,S,Oakland,Terror -  Fantasia
+1185,F,33,S,Stockton,Fantasia -  Animação
+1186,F,23,N,Berna,Drama -  Histórico
+1187,F,25,N,New Orleans,Ação -  Policial
+1188,M,44,N,Memphis,Terror -  Fantasia
+1189,M,24,N,Seattle,Ação -  Policial
+1190,M,30,S,San Diego,Fantasia -  Animação
+1191,M,35,S,Venice,Drama -  Histórico
+1192,F,23,N,Rochester,Terror -  Fantasia
+1193,F,46,S,Santa Ana,Fantasia -  Animação
+1194,M,46,S,Minneapolis,Ação -  Policial
+1195,M,23,N,Valetta,Ação -  Policial
+1196,M,18,N,Seattle,Fantasia -  Animação
+1197,M,21,N,Seattle,Terror -  Fantasia
+1198,M,35,S,Prague,Fantasia -  Animação
+1199,M,33,S,Hayward,Drama -  Histórico
+1200,F,26,N,Cincinnati,Terror -  Fantasia
+1201,M,47,S,Washington,Terror -  Fantasia
+1202,M,48,N,Rome,Ação -  Policial
+1203,F,24,N,Lyon,Fantasia -  Animação
+1204,F,28,S,Bucharest,Ação -  Policial
+1205,M,42,N,Rochester,Drama -  Histórico
+1206,F,43,N,Rochester,Drama -  Histórico
+1207,M,37,N,Prague,Ação -  Policial
+1208,M,47,N,Fort Lauderdale,Drama -  Histórico
+1209,F,26,N,Santa Ana,Ação -  Policial
+1210,F,27,N,Venice,Drama -  Histórico
+1211,M,47,N,Fremont,Terror -  Fantasia
+1212,F,18,N,Washington,Fantasia -  Animação
+1213,F,51,S,Escondido,Fantasia -  Animação
+1214,M,34,S,Venice,Fantasia -  Animação
+1215,M,54,S,Saint Paul,Drama -  Histórico
+1216,M,33,S,Berlin,Ação -  Policial
+1217,F,46,N,San Bernardino,Drama -  Histórico
+1218,F,19,N,Fayetteville,Terror -  Fantasia
+1219,F,22,N,Phoenix,Fantasia -  Animação
+1220,M,43,S,Chicago,Terror -  Fantasia
+1221,M,44,N,Denver,Fantasia -  Animação
+1222,M,26,N,San Antonio,Fantasia -  Animação
+1223,F,44,S,Henderson,Drama -  Histórico
+1224,M,31,S,San Diego,Drama -  Histórico
+1225,F,22,N,New York,Fantasia -  Animação
+1226,M,52,N,Santa Ana,Ação -  Policial
+1227,M,45,N,Worcester,Drama -  Histórico
+1228,M,55,N,Hayward,Terror -  Fantasia
+1229,M,48,N,Henderson,Terror -  Fantasia
+1230,M,22,N,Lakewood,Fantasia -  Animação
+1231,M,30,S,Fremont,Ação -  Policial
+1232,F,27,N,Saint Paul,Terror -  Fantasia
+1233,M,24,N,Los Angeles,Drama -  Histórico
